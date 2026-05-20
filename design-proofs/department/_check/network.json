@@ -1,0 +1,6 @@
+{
+  "ajax": [
+    "/ajax/department/getdepartment.php"
+  ],
+  "requestCount": 145
+}

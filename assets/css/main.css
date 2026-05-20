@@ -1,0 +1,271 @@
+.img_logo {
+        width: 45px;
+    }
+    .nav_style {
+        height: auto;
+    }
+    .avatar {
+    background-color: #aaa;
+    border-radius: 50%;
+    display: inline-block;
+    font-weight: 500;
+    height: 38px;
+    line-height: 38px;
+    margin: 0 10px 0 0;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    vertical-align: middle;
+    width: 38px;
+    position: relative;
+    white-space: nowrap;
+    }
+    .avatar, .avatar:hover {
+        color: #fff;
+    }
+    .button:active, 
+    button:active,
+    .button:focus, 
+    button:focus,
+    .button:hover, 
+    button:hover{
+        border:none !important;
+        outline:none !important;
+    }
+
+    @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #fafafa;
+}
+
+p {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1em;
+    font-weight: 300;
+    line-height: 1.7em;
+    color: #999;
+}
+
+a, a:hover, a:focus {
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    /* position: fixed;
+    height: auto; */
+}
+
+#sidebar {
+    /* don't forget to add all the previously mentioned styles here too */
+    background:  rgb(52, 68, 76);
+    color: #fff;
+    transition: all 0.3s;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: rgb(52, 68, 76);
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid  rgb(52, 68, 76);
+}
+
+#sidebar ul p {
+    color: #fff;
+    padding: 10px;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+}
+#sidebar ul li a:hover {
+    color:  rgb(52, 68, 76);
+    background: #fff;
+}
+
+#sidebar ul li.active > a, a[aria-expanded="true"] {
+    color: #fff;
+    background:  rgb(52, 68, 76);
+}
+ul ul a {
+    font-size: 0.9em !important;
+    padding-left: 30px !important;
+    background:  transparent;
+}
+
+a[data-toggle="collapse"] {
+    position: relative;
+}
+span
+{
+    color: rgb(132, 130, 128);
+    transition: 0.3s;
+}
+span:hover{
+    color: white;
+}
+i{
+    cursor: pointer;
+}
+.dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+#sidebarCollapse {
+    margin-left: 150px;
+    transition: all 0.3s;
+}
+#main_div {
+    position: absolute;
+    left: 280px;
+     z-index: -1; 
+    right: 50px;
+    transition:all 0.3s;
+}
+
+#img_logo_hide2 {
+    display: none;
+}
+#sbar{
+    height: 100%;
+    position: fixed;
+    overflow-y: scroll;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}   
+backdrop.fade {
+    opacity: 0;
+}
+.modal-backdrop.in {
+    opacity: 0;
+}
+
+.borderless td, .borderless th {
+    border: none !important;
+}
+@media (min-width: 1200px){
+.modelcontainer {
+    width: 600px !important;
+}
+
+}
+    @media only screen and (max-width: 767px) {
+        /* body {
+            zoom: 95%;
+        } */
+        .img_logo {
+            width: 35px;
+        }
+        .nav_style {
+            height: 65px;
+        }
+        #myNavbar {
+            background: linear-gradient(to right, #f7ad45 0%,#f27407 38%,#f27407 38%,#ff3f69 82%);
+        }
+        #sidebar {
+        margin-left: -250px;
+        position: fixed;
+        height: 100%;
+        }
+        #sidebar.active {
+            margin-left: 0;
+        }
+        #sidebarCollapse {
+            margin-left: 10px;
+        }
+        #img_logo_hide2 {
+            display: block;
+        }
+        
+        #img_logo_hide1 {
+            display: none;
+        }
+        #myTable {
+            overflow-x: scroll;
+        }
+        #main_div {
+            position: absolute;
+            left: 50px;
+            /* z-index: -1; */
+            right: 50px;
+            transition: all 0.3s;
+        }
+
+                /* width */
+::-webkit-scrollbar {
+  height: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+    }
+#drophov{
+        transition: 0.3s;
+}
+#drophov:hover
+{
+    background-color: rgba(0,0,0,0.2);
+}
+#smenuhov{
+    color: #b7c0cd;
+}
+#smenuhov:hover
+{
+    color: white;   
+}
+.mystyle{
+    color:red;
+}

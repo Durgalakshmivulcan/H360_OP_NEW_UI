@@ -1,0 +1,9 @@
+{
+  "ajax": [
+    "/ajax/accesscontrol/registration/getOrganization.php",
+    "/ajax/accesscontrol/registration/getregistration.php",
+    "/ajax/accesscontrol/registration/getroleid.php",
+    "/ajax/accesscontrol/registration/getsecurity.php"
+  ],
+  "requestCount": 148
+}

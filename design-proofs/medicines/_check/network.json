@@ -1,0 +1,9 @@
+{
+  "ajax": [
+    "/ajax/medicines/getmedicine.php",
+    "/ajax/medicines/getorganization.php",
+    "/ajax/medicines/gettype.php",
+    "/ajax/rxgroup/getUnits.php"
+  ],
+  "requestCount": 149
+}

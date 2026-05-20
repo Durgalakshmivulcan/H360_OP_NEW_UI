@@ -1,0 +1,6 @@
+{
+  "ajax": [
+    "/ajax/revenue_report/report_data.php"
+  ],
+  "requestCount": 144
+}

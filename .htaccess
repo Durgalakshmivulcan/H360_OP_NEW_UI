@@ -1,0 +1,22 @@
+# Disable gzip on the SSE endpoint so bytes flush immediately
+<IfModule mod_deflate.c>
+  SetEnvIfNoCase Request_URI ^/api/sse\.php$ no-gzip=1
+</IfModule>
+
+# Turn off PHP output buffering for the SSE script
+<IfModule mod_php7.c>
+  <Files "sse.php">
+    php_flag zlib.output_compression Off
+    php_value output_buffering 0
+  </Files>
+</IfModule>
+<IfModule mod_php8.c>
+  <Files "sse.php">
+    php_flag zlib.output_compression Off
+    php_value output_buffering 0
+  </Files>
+</IfModule>
+
+RewriteEngine on
+
+RewriteOptions inherit

@@ -1,0 +1,18 @@
+.breadcrumb {
+  background-color: transparent;
+  padding: 10px 0px;
+
+  .breadcrumb-item {
+    i {
+      margin-right: 5px;
+    }
+    a .feather {
+      height: 18px;
+      width: 18px;
+      margin-right: 5px;
+      fill: rgba(75, 75, 90, 0.12);
+      color: black;
+      vertical-align: sub;
+    }
+  }
+}

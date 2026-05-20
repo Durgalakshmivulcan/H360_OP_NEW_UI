@@ -1,0 +1,7 @@
+{
+  "ajax": [
+    "/ajax/doctors_time_slots/getdata.php",
+    "/ajax/doctors_time_slots/getrange.php"
+  ],
+  "requestCount": 145
+}

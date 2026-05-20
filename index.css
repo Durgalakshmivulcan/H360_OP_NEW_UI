@@ -1,0 +1,237 @@
+
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css");
+body {
+margin: 0;
+/* font-family: Arial, Helvetica, sans-serif; */
+}
+
+
+/* nav css */
+.top{
+    color:#9a9a9a;
+    color: #9a9a9a;
+    margin-top: -8px;
+    font: normal normal normal 14px/19px Segoe UI;
+
+}
+.bg1{
+    background: #243A85CC 0% 0% no-repeat padding-box;
+    padding:10px;
+    padding-left:5px;
+    margin-left:5px;
+    font: normal normal normal 14px/19px Segoe UI;
+
+    }
+    .bg{
+    background:#243A8599;
+    font: normal normal normal 14px/19px Segoe UI;
+
+    
+    }
+    
+    .profile_i{
+    font-size:14px;
+    margin:5px; 
+    color:white;
+    font: normal normal normal 14px/19px Segoe UI;
+
+    }
+    
+    .dropdown-menu{
+    margin-left:-100px;
+    text-align:left;
+    border:none;
+    
+    }
+    .dropdown{
+        border:none;
+    }
+
+    
+    .email_i{
+        margin:5px; 
+        padding-top:10px;
+        font: normal normal normal 14px/19px Segoe UI;
+        letter-spacing: 0px;
+        color: #FFFFFF;
+        opacity: 1;
+    }
+
+    .email_i span{
+        padding-left: 8px;
+
+    }
+
+
+
+.alignleft {
+	float: left;
+    margin: 2rem;
+
+}
+.alignright {
+	float: right;
+    text-align: left;
+    font: normal normal bold 14px/16px Arial;
+    letter-spacing: 0px;
+    margin: 3rem;
+}
+
+
+
+.line{
+    margin-left: 30px;
+    width: 83px;
+    height: 38px;
+    /* UI Properties */
+    background: #243A85CC 0% 0% no-repeat padding-box;
+    border-radius: 7px;
+    opacity: 1;
+    border:none;
+    color: #FFF;
+}
+.line2{
+    margin-left: 30px;
+    width: 83px;
+    height: 38px;
+    /* UI Properties */
+    background: #F5F5F5CC 0% 0% no-repeat padding-box;
+    border-radius: 7px;
+    opacity: 1;
+    border:none;
+    color: #707070;
+}
+
+.btn1{
+    width: 83px;
+    height: 38px;
+    background: #F5F5F5 0% 0% no-repeat padding-box;
+    border-radius: 5px;
+    font: normal normal normal 14px/16px Arial;
+    letter-spacing: 0px;
+    color: #707070;
+    opacity: 1;
+    border: none;
+}
+
+.btn1:hover{
+    width: 83px;
+    height: 38px;
+    background: #F5F5F5 0% 0% no-repeat padding-box;
+    border-radius: 5px;
+    font: normal normal normal 14px/16px Arial;
+    letter-spacing: 0px;
+    color: #707070;
+    opacity: 1
+}
+.btn2{
+    width: 83px;
+    height: 38px;
+    border-radius: 5px;
+    font: normal normal normal 14px/16px Arial;
+    letter-spacing: 0px;
+    color: #FFFF;
+    opacity: 1;
+    border: none;
+    background: #243A85CC 0% 0% no-repeat padding-box;
+}
+
+.btn4{
+    width: 184px;
+    height: 38px;
+    /* UI Properties */
+    background: #243A85CC 0% 0% no-repeat padding-box;
+    color: #FFFF;
+    border-radius: 5px;
+    opacity: 1;
+}
+
+.btn4:hover{
+    width: 184px;
+    height: 38px;
+    /* UI Properties */
+    background: #243A85CC 0% 0% no-repeat padding-box;
+    color: #FFFF;
+    border-radius: 5px;
+    opacity: 1;
+}
+
+.second_nav{
+    padding-top: 20px;
+}
+.four_nav{
+    margin-top: 10px;
+    margin-left: 5px;
+    width: 100%;
+    height: 450px;
+    /* UI Properties */
+    background: #F0F3F4 0% 0% no-repeat padding-box;
+    border-radius: 20px;
+    opacity: 1;
+}
+
+.img{
+    width: 30px;
+    height: 30px;
+}
+.img img{
+    width: 30px;
+    height: 30px;
+}
+
+.machine{
+    padding-left: 10px;
+    font: normal normal bold 24px/28px Arial;
+    letter-spacing: 0px;
+    color: #010101;
+    opacity: 1;
+}
+
+ul .list{
+    margin-right: 100px;
+}
+
+
+
+
+
+
+.inline{
+    padding: 50px;
+}
+
+.inline input{
+    width: 375px;
+    height: 35px;
+}
+
+.save{
+    margin-top: 30px;
+    margin-left: 320px;
+    background: #243A85CC 0% 0% no-repeat padding-box;
+    color: #FFFFFF;
+    border-radius: 5px;
+    opacity: 1;
+}
+
+.save:hover{
+    background: #243A85CC 0% 0% no-repeat padding-box;
+    color: #FFFFFF;
+    border-radius: 5px;
+    opacity: 1;
+}
+
+
+.out{
+    background: #243A85CC 0% 0% no-repeat padding-box;
+    color: #FFFFFF;
+    border-radius: 5px;
+    opacity: 1;
+}
+
+.out:hover{
+    background: #243A85CC 0% 0% no-repeat padding-box;
+    color: #FFFFFF;
+    border-radius: 5px;
+    opacity: 1;
+}

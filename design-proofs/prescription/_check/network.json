@@ -1,0 +1,15 @@
+{
+  "ajax": [
+    "/ajax/Wprescripation/GetMenu.php",
+    "/ajax/Wprescripation/getAdviseTemplates.php?org_id=1",
+    "/ajax/Wprescripation/getDosages.php",
+    "/ajax/Wprescripation/getInTakePeriod.php",
+    "/ajax/Wprescripation/getMedichines.php",
+    "/ajax/Wprescripation/getMedicineType.php",
+    "/ajax/Wprescripation/getPrescriptionTemplates.php",
+    "/ajax/Wprescripation/getTests.php",
+    "/ajax/Wprescripation/getUnit.php",
+    "/ajax/Wprescripation/get_investigationTemplates.php?org_id=1"
+  ],
+  "requestCount": 158
+}

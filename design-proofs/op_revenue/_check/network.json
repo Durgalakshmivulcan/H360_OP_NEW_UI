@@ -1,0 +1,15 @@
+{
+  "ajax": [
+    "/ajax/dashbord/getDoctorSlotStats.php?security_id=2",
+    "/ajax/dashbord/get_dashboard_lists.php?security_id=2",
+    "/ajax/dashbord/get_dashboard_metrics.php?security_id=2",
+    "/ajax/dashbord/getdate.php",
+    "/ajax/dashbord/getdepartment.php",
+    "/ajax/dashbord/getdocservice.php",
+    "/ajax/dashbord/gettopprescribedtests.php",
+    "/ajax/dashbord/getuserlist.php",
+    "/ajax/oprevenue/op_revenue_list.php?start=0&length=10&search%5Bvalue%5D=&from=2026-04-11&to=2026-05-10&service=&doctor=&payer=&search_text=",
+    "/ajax/oprevenue/op_revenue_services.php"
+  ],
+  "requestCount": 160
+}

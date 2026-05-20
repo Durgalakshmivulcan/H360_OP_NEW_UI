@@ -1,0 +1,12 @@
+{
+  "ajax": [
+    "/ajax/Wprescripation/getDosages.php",
+    "/ajax/Wprescripation/getInTakePeriod.php",
+    "/ajax/Wprescripation/getMedichines.php",
+    "/ajax/Wprescripation/getMedicineType.php",
+    "/ajax/Wprescripation/getUnit.php",
+    "/ajax/rxgroup/getMedicineData.php",
+    "/ajax/rxgroup/getNote.php"
+  ],
+  "requestCount": 153
+}

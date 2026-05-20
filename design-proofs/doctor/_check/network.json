@@ -1,0 +1,7 @@
+{
+  "ajax": [
+    "/ajax/doctors/getdoctordata.php",
+    "/ajax/doctors/number.php"
+  ],
+  "requestCount": 146
+}

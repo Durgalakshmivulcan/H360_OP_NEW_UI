@@ -1,0 +1,8 @@
+{
+  "ajax": [
+    "/ajax/DailyReports/daily_reports.php?from=2026-05-09&patient_id=All&doctor_id=All&orgId=1",
+    "/ajax/DailyReports/daily_reports.php?from=2026-05-09&patient_id=All&doctor_id=All&orgId=1&_=1778326480576",
+    "/ajax/DailyReports/patientid.php?doctor_id=All&patient_id=All"
+  ],
+  "requestCount": 147
+}

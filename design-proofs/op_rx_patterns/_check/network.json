@@ -1,0 +1,7 @@
+{
+  "ajax": [
+    "/ajax/oprxpatters/opfeteching.php",
+    "/ajax/oprxpatters/opfeteching.php?from=2026-05-03&to=2026-05-09&dx=&class=&doctor=&orgId=1&_=1778326336642"
+  ],
+  "requestCount": 145
+}

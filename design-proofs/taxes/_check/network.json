@@ -1,0 +1,6 @@
+{
+  "ajax": [
+    "/ajax/taxes/gettaxes.php"
+  ],
+  "requestCount": 144
+}

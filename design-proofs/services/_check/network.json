@@ -1,0 +1,6 @@
+{
+  "ajax": [
+    "/ajax/service/getservies.php"
+  ],
+  "requestCount": 144
+}

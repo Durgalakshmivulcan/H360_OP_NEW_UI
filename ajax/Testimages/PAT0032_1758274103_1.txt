@@ -1,0 +1,19 @@
+Dashboard Page – Issues
+
+1 Doctor slots and days not displayed correctly.
+
+2 Doctor names showing with duplicate Dr. Dr. prefix.
+
+3 Dashboard shows overall data instead of monthly data.
+
+4 User Access List card is cut off (not displayed fully till end of the card).
+
+Test Billing Page – Issues
+
+1 Patient test data not fetching correctly for some patients (e.g., Durga Lax).
+
+2 When showing “No prescription found for this patient”, the View button should be hidden.
+
+All Patient Page (and) Test Report Page – Issues
+
+1 Patient data fetching is not working correctly.

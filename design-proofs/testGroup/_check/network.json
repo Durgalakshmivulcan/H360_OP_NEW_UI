@@ -1,0 +1,6 @@
+{
+  "ajax": [
+    "/ajax/testGroup/GetTestGroup.php"
+  ],
+  "requestCount": 144
+}

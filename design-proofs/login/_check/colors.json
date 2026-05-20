@@ -1,0 +1,62 @@
+{
+  "bg": [
+    {
+      "color": "#FFFFFF",
+      "count": 3
+    },
+    {
+      "color": "#F7F4EE",
+      "count": 1
+    },
+    {
+      "color": "#EFEAE0",
+      "count": 1
+    },
+    {
+      "color": "#050E22",
+      "count": 1
+    }
+  ],
+  "fg": [
+    {
+      "color": "#050E22",
+      "count": 27
+    },
+    {
+      "color": "#6777EF",
+      "count": 3
+    },
+    {
+      "color": "#5C667B",
+      "count": 2
+    },
+    {
+      "color": "#FC544B",
+      "count": 2
+    },
+    {
+      "color": "#DC3545",
+      "count": 2
+    },
+    {
+      "color": "#EDE9DD",
+      "count": 1
+    }
+  ],
+  "border": [
+    {
+      "color": "#081530@0.18",
+      "count": 2
+    },
+    {
+      "color": "#081530",
+      "count": 1
+    },
+    {
+      "color": "#050E22",
+      "count": 1
+    }
+  ],
+  "fillStroke": [],
+  "inline": []
+}

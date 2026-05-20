@@ -1,0 +1,15 @@
+{
+  "ajax": [
+    "/ajax/AppointmentBooking/AppointmentDoctorFee.php",
+    "/ajax/AppointmentBooking/AutoGenareteBill_Ids.php",
+    "/ajax/AppointmentBooking/GetPatientUnicodeID.php?org_id=1",
+    "/ajax/AppointmentBooking/appointmentTimeSlot.php",
+    "/ajax/AppointmentBooking/fetch_patient_names.php?org_id=1",
+    "/ajax/AppointmentBooking/getAllData.php",
+    "/ajax/AppointmentBooking/getAllData2.php",
+    "/ajax/AppointmentBooking/getPatientNumbers.php",
+    "/ajax/AppointmentBooking/getdateforpatientid.php?org_id=1",
+    "/ajax/AppointmentBooking/getdoctors.php"
+  ],
+  "requestCount": 157
+}

@@ -1,0 +1,7 @@
+{
+  "ajax": [
+    "/ajax/referrals/getReferralDetails.php",
+    "/ajax/referrals/getReferralStats.php"
+  ],
+  "requestCount": 145
+}

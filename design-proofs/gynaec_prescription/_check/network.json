@@ -1,0 +1,13 @@
+{
+  "ajax": [
+    "/ajax/Wprescripation/getDosages.php",
+    "/ajax/Wprescripation/getInTakePeriod.php",
+    "/ajax/Wprescripation/getMedichines.php",
+    "/ajax/Wprescripation/getMedicineType.php",
+    "/ajax/Wprescripation/getTests.php",
+    "/ajax/Wprescripation/getUnit.php",
+    "/ajax/gynaec_prescription/getGynaecDxTemplates.php",
+    "/ajax/gynaec_prescription/getGynaecRxList.php"
+  ],
+  "requestCount": 156
+}

@@ -1,0 +1,8 @@
+{
+  "ajax": [
+    "/ajax/Allpatientreports/fetchpatientdetails.php?org_id=1",
+    "/ajax/optestreports/getoptestnames.php",
+    "/ajax/optestreports/gettestsreports.php"
+  ],
+  "requestCount": 146
+}

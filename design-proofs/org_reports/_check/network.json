@@ -1,0 +1,7 @@
+{
+  "ajax": [
+    "/ajax/billing/getdepart.php",
+    "/ajax/billing/getprice.php"
+  ],
+  "requestCount": 146
+}

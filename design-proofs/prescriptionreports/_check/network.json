@@ -1,0 +1,6 @@
+{
+  "ajax": [
+    "/ajax/prescription_report/getprescriptionlist.php"
+  ],
+  "requestCount": 144
+}

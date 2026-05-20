@@ -1,0 +1,6 @@
+{
+  "ajax": [
+    "/ajax/Concession/GetConcessions.php"
+  ],
+  "requestCount": 144
+}

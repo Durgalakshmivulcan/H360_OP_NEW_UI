@@ -1,0 +1,47 @@
+[error] Failed to load resource: net::ERR_CONNECTION_CLOSED
+[error] Failed to load resource: net::ERR_CONNECTION_CLOSED
+[warning] Possible Unhandled Promise Rejection: Error: Element not found
+    at http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:393923
+    at tt (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:197500)
+    at new U (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:196435)
+    at i.value (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:393193)
+    at chart1 (http://localhost:8080/assets/js/page/index.js:124:9)
+    at HTMLDocument.<anonymous> (http://localhost:8080/assets/js/page/index.js:4:3)
+    at e (http://localhost:8080/assets/js/app.min.js:1:29151)
+    at t (http://localhost:8080/assets/js/app.min.js:1:29475)
+[warning] Possible Unhandled Promise Rejection: Error: Element not found
+    at http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:393923
+    at tt (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:197500)
+    at new U (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:196435)
+    at i.value (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:393193)
+    at chart2 (http://localhost:8080/assets/js/page/index.js:243:9)
+    at HTMLDocument.<anonymous> (http://localhost:8080/assets/js/page/index.js:5:3)
+    at e (http://localhost:8080/assets/js/app.min.js:1:29151)
+    at t (http://localhost:8080/assets/js/app.min.js:1:29475)
+[warning] Possible Unhandled Promise Rejection: Error: Element not found
+    at http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:393923
+    at tt (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:197500)
+    at new U (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:196435)
+    at i.value (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:393193)
+    at smallchart1 (http://localhost:8080/assets/js/page/index.js:335:9)
+    at HTMLDocument.<anonymous> (http://localhost:8080/assets/js/page/index.js:6:3)
+    at e (http://localhost:8080/assets/js/app.min.js:1:29151)
+    at t (http://localhost:8080/assets/js/app.min.js:1:29475)
+[warning] Possible Unhandled Promise Rejection: Error: Element not found
+    at http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:393923
+    at tt (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:197500)
+    at new U (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:196435)
+    at i.value (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:393193)
+    at smallchart2 (http://localhost:8080/assets/js/page/index.js:420:9)
+    at HTMLDocument.<anonymous> (http://localhost:8080/assets/js/page/index.js:7:3)
+    at e (http://localhost:8080/assets/js/app.min.js:1:29151)
+    at t (http://localhost:8080/assets/js/app.min.js:1:29475)
+[warning] Possible Unhandled Promise Rejection: Error: Element not found
+    at http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:393923
+    at tt (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:197500)
+    at new U (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:196435)
+    at i.value (http://localhost:8080/assets/bundles/apexcharts/apexcharts.min.js:6:393193)
+    at smallchart3 (http://localhost:8080/assets/js/page/index.js:504:9)
+    at HTMLDocument.<anonymous> (http://localhost:8080/assets/js/page/index.js:8:3)
+    at e (http://localhost:8080/assets/js/app.min.js:1:29151)
+    at t (http://localhost:8080/assets/js/app.min.js:1:29475)

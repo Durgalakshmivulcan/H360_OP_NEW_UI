@@ -1,0 +1,42 @@
+* Menus
+
+1. Dashboard
+    -> Dashboard-1
+    -> Dashboard-2
+
+2. Administrator
+    -> OrganizationName
+
+3. Access control
+    -> Change Password
+    -> Menus
+    -> Roles
+    -> Users Registration
+
+4. Master
+    -> Department
+    -> Specialization
+    -> Doctor
+    -> Taxes
+
+5. Services
+    -> Add Services
+    -> Add Test
+    -> Test Groups
+    -> Medicines
+    -> RX Groups
+
+6. Billing
+    -> Appointment
+    -> Test Billing
+
+7. Doctor Menus
+    -> Doctor Time Slots
+    -> Prescription
+    -> Visitor Doctor
+    -> Display Visitor patient
+
+8. Reports
+   -> All Patient Reports
+
+9. Help And Support

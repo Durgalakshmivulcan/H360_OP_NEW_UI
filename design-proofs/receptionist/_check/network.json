@@ -1,0 +1,6 @@
+{
+  "ajax": [
+    "/ajax/receptionist/get_appointments.php"
+  ],
+  "requestCount": 146
+}

@@ -1,0 +1,6 @@
+{
+  "ajax": [
+    "/ajax/Allpatientreports/fetchpatientdetails.php?org_id=1"
+  ],
+  "requestCount": 144
+}

@@ -1,0 +1,240 @@
+{
+  "bg": [
+    {
+      "color": "#FFFFFF",
+      "count": 80
+    },
+    {
+      "color": "#FDFDFF",
+      "count": 15
+    },
+    {
+      "color": "#EFEAE0",
+      "count": 11
+    },
+    {
+      "color": "#F7F4EE",
+      "count": 10
+    },
+    {
+      "color": "#081530",
+      "count": 6
+    },
+    {
+      "color": "#050E22",
+      "count": 4
+    },
+    {
+      "color": "#FFFFFF@0.04",
+      "count": 4
+    },
+    {
+      "color": "#424242",
+      "count": 4
+    },
+    {
+      "color": "#E9ECEF",
+      "count": 3
+    },
+    {
+      "color": "#6777EF",
+      "count": 3
+    },
+    {
+      "color": "#000000@0.02",
+      "count": 2
+    },
+    {
+      "color": "#F3F3F3",
+      "count": 2
+    },
+    {
+      "color": "#F7F4EE@0.92",
+      "count": 1
+    },
+    {
+      "color": "#081530@0.11",
+      "count": 1
+    },
+    {
+      "color": "#ECE8E8",
+      "count": 1
+    },
+    {
+      "color": "#3DC7BE",
+      "count": 1
+    },
+    {
+      "color": "#343A40",
+      "count": 1
+    },
+    {
+      "color": "#FFA117",
+      "count": 1
+    },
+    {
+      "color": "#4CAF4F",
+      "count": 1
+    },
+    {
+      "color": "#EA5455",
+      "count": 1
+    }
+  ],
+  "fg": [
+    {
+      "color": "#050E22",
+      "count": 335
+    },
+    {
+      "color": "#212529",
+      "count": 170
+    },
+    {
+      "color": "#8895AC",
+      "count": 100
+    },
+    {
+      "color": "#EDE9DD@0.65",
+      "count": 80
+    },
+    {
+      "color": "#5C667B",
+      "count": 74
+    },
+    {
+      "color": "#EDE9DD",
+      "count": 41
+    },
+    {
+      "color": "#EDE9DD@0.78",
+      "count": 36
+    },
+    {
+      "color": "#15315A",
+      "count": 30
+    },
+    {
+      "color": "#000000",
+      "count": 23
+    },
+    {
+      "color": "#555556",
+      "count": 12
+    },
+    {
+      "color": "#C49A3F",
+      "count": 12
+    },
+    {
+      "color": "#34395E",
+      "count": 8
+    },
+    {
+      "color": "#444444",
+      "count": 4
+    },
+    {
+      "color": "#8C95A6",
+      "count": 4
+    },
+    {
+      "color": "#A37E2B",
+      "count": 2
+    },
+    {
+      "color": "#C8362F",
+      "count": 2
+    },
+    {
+      "color": "#E5CB8A",
+      "count": 2
+    },
+    {
+      "color": "#FFFFFF",
+      "count": 2
+    },
+    {
+      "color": "#6777EF",
+      "count": 1
+    }
+  ],
+  "border": [
+    {
+      "color": "#081530@0.18",
+      "count": 41
+    },
+    {
+      "color": "#081530@0.10",
+      "count": 24
+    },
+    {
+      "color": "#FFFFFF@0.04",
+      "count": 18
+    },
+    {
+      "color": "#FFFFFF@0.06",
+      "count": 7
+    },
+    {
+      "color": "#DFE0E1",
+      "count": 4
+    },
+    {
+      "color": "#CED4DA",
+      "count": 4
+    },
+    {
+      "color": "#888888",
+      "count": 4
+    },
+    {
+      "color": "#050E22",
+      "count": 4
+    },
+    {
+      "color": "#FFFFFF",
+      "count": 4
+    },
+    {
+      "color": "#002864@0.12",
+      "count": 2
+    },
+    {
+      "color": "#C49A3F@0.20",
+      "count": 1
+    },
+    {
+      "color": "#EAE9E9",
+      "count": 1
+    },
+    {
+      "color": "#C49A3F",
+      "count": 1
+    }
+  ],
+  "fillStroke": [
+    {
+      "color": "#4B4B5A@0.12",
+      "count": 72
+    },
+    {
+      "color": "#8895AC",
+      "count": 72
+    },
+    {
+      "color": "#555556",
+      "count": 12
+    },
+    {
+      "color": "#000000",
+      "count": 3
+    }
+  ],
+  "inline": [
+    {
+      "color": "rgb(66, 66, 66)",
+      "count": 4
+    }
+  ]
+}

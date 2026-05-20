@@ -1,0 +1,106 @@
+.activities {
+  display: -webkit-box;
+  display: flex;
+  flex-wrap: wrap;
+
+  .activity {
+    width: 100%;
+    display: -webkit-box;
+    display: flex;
+    position: relative;
+
+    &:before {
+      content: " ";
+      position: absolute;
+      left: 25px;
+      top: 0;
+      width: 2px;
+      height: 100%;
+      background-color: color(primary);
+    }
+
+    &:last-child {
+      &:before {
+        display: none;
+      }
+    }
+
+    .activity-icon {
+      @include box();
+      margin-right: 20px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .activity-detail {
+      @include card_base;
+      position: relative;
+      padding: 15px;
+
+      &:before {
+        content: "\f0d9";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        font-size: 20px;
+        position: absolute;
+        left: -8px;
+        color: #fff;
+      }
+
+      h4 {
+        font-size: 18px;
+        color: color(dark);
+      }
+
+      p {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+.activity-list {
+  list-style: none;
+  position: relative;
+  margin: 0;
+  padding: 0px 0px 30px 0px;
+}
+
+.activity-list:after {
+  content: "";
+  position: absolute;
+  background: #e1e6f1;
+  height: 100%;
+  width: 1px;
+  top: 0;
+  left: 28px;
+  z-index: 1;
+}
+
+.activity-list li {
+  margin-bottom: 30px;
+  padding-left: 55px;
+  position: relative;
+}
+
+.activity-list li:last-child {
+  margin-bottom: 0;
+}
+
+.activity-list li .activity-icon {
+  position: absolute;
+  left: 22px;
+  top: 0px;
+  border-radius: 50%;
+  padding: 2px;
+  width: 13px;
+  height: 13px;
+  z-index: 2;
+}
+
+.activity-list li h6 {
+  margin-bottom: 5px;
+  font-size: 13px;
+}

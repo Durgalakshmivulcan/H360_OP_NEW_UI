@@ -1,0 +1,300 @@
+{
+  "bg": [
+    {
+      "color": "#FFFFFF",
+      "count": 104
+    },
+    {
+      "color": "#EFEAE0",
+      "count": 31
+    },
+    {
+      "color": "#C49A3F@0.14",
+      "count": 26
+    },
+    {
+      "color": "#C49A3F@0.16",
+      "count": 20
+    },
+    {
+      "color": "#F7F4EE",
+      "count": 11
+    },
+    {
+      "color": "#C49A3F",
+      "count": 10
+    },
+    {
+      "color": "#081530",
+      "count": 8
+    },
+    {
+      "color": "#424242",
+      "count": 6
+    },
+    {
+      "color": "#050E22",
+      "count": 5
+    },
+    {
+      "color": "#000000@0.02",
+      "count": 4
+    },
+    {
+      "color": "#EEEEEE",
+      "count": 4
+    },
+    {
+      "color": "#FFFFFF@0.04",
+      "count": 4
+    },
+    {
+      "color": "#6777EF",
+      "count": 3
+    },
+    {
+      "color": "#F7F4EE@0.86",
+      "count": 2
+    },
+    {
+      "color": "#0D6EFD",
+      "count": 2
+    },
+    {
+      "color": "#DC3545",
+      "count": 2
+    },
+    {
+      "color": "#F3F3F3",
+      "count": 2
+    },
+    {
+      "color": "#E9ECEF",
+      "count": 2
+    },
+    {
+      "color": "#F7F4EE@0.92",
+      "count": 1
+    },
+    {
+      "color": "#ECE8E8",
+      "count": 1
+    },
+    {
+      "color": "#3DC7BE",
+      "count": 1
+    },
+    {
+      "color": "#343A40",
+      "count": 1
+    },
+    {
+      "color": "#FFA117",
+      "count": 1
+    },
+    {
+      "color": "#4CAF4F",
+      "count": 1
+    },
+    {
+      "color": "#EA5455",
+      "count": 1
+    }
+  ],
+  "fg": [
+    {
+      "color": "#050E22",
+      "count": 697
+    },
+    {
+      "color": "#EDE9DD",
+      "count": 312
+    },
+    {
+      "color": "#212529",
+      "count": 201
+    },
+    {
+      "color": "#5C667B",
+      "count": 186
+    },
+    {
+      "color": "#8895AC",
+      "count": 100
+    },
+    {
+      "color": "#EDE9DD@0.65",
+      "count": 80
+    },
+    {
+      "color": "#A37E2B",
+      "count": 50
+    },
+    {
+      "color": "#EDE9DD@0.78",
+      "count": 36
+    },
+    {
+      "color": "#15315A",
+      "count": 28
+    },
+    {
+      "color": "#C49A3F",
+      "count": 16
+    },
+    {
+      "color": "#000000",
+      "count": 14
+    },
+    {
+      "color": "#555556",
+      "count": 12
+    },
+    {
+      "color": "#16A85F",
+      "count": 8
+    },
+    {
+      "color": "#C8362F",
+      "count": 4
+    },
+    {
+      "color": "#4878B8",
+      "count": 2
+    },
+    {
+      "color": "#E5CB8A",
+      "count": 2
+    },
+    {
+      "color": "#FFFFFF",
+      "count": 2
+    },
+    {
+      "color": "#6777EF",
+      "count": 1
+    }
+  ],
+  "border": [
+    {
+      "color": "#081530@0.10",
+      "count": 301
+    },
+    {
+      "color": "#081530@0.18",
+      "count": 27
+    },
+    {
+      "color": "#C49A3F@0.30",
+      "count": 24
+    },
+    {
+      "color": "#FFFFFF@0.04",
+      "count": 18
+    },
+    {
+      "color": "#FFFFFF@0.06",
+      "count": 7
+    },
+    {
+      "color": "#FFFFFF",
+      "count": 6
+    },
+    {
+      "color": "#C49A3F",
+      "count": 3
+    },
+    {
+      "color": "#15315A",
+      "count": 2
+    },
+    {
+      "color": "#002864@0.12",
+      "count": 2
+    },
+    {
+      "color": "#C49A3F@0.20",
+      "count": 1
+    },
+    {
+      "color": "#EAE9E9",
+      "count": 1
+    },
+    {
+      "color": "#050E22",
+      "count": 1
+    }
+  ],
+  "fillStroke": [
+    {
+      "color": "#4B4B5A@0.12",
+      "count": 72
+    },
+    {
+      "color": "#8895AC",
+      "count": 72
+    },
+    {
+      "color": "#000000",
+      "count": 49
+    },
+    {
+      "color": "#C49A3F@0.10",
+      "count": 38
+    },
+    {
+      "color": "#555556",
+      "count": 12
+    },
+    {
+      "color": "#FFFFFF",
+      "count": 4
+    },
+    {
+      "color": "#C49A3F@0.18",
+      "count": 4
+    },
+    {
+      "color": "#C49A3F",
+      "count": 4
+    },
+    {
+      "color": "#B1B9C4",
+      "count": 2
+    },
+    {
+      "color": "#081530@0.18",
+      "count": 2
+    },
+    {
+      "color": "#050E22",
+      "count": 2
+    },
+    {
+      "color": "#B6B6B6",
+      "count": 2
+    }
+  ],
+  "inline": [
+    {
+      "color": "#1a56a0",
+      "count": 20
+    },
+    {
+      "color": "#fff",
+      "count": 20
+    },
+    {
+      "color": "rgb(66, 66, 66)",
+      "count": 6
+    },
+    {
+      "color": "transparent",
+      "count": 2
+    },
+    {
+      "color": "rgb(139, 49, 208)",
+      "count": 2
+    }
+  ]
+}

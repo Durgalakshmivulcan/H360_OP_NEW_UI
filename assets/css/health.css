@@ -1,0 +1,48 @@
+.addPatientIcon i{
+    width: 40px;
+    font-size: 18px;
+    /* height: 100px; */
+    cursor: pointer;
+    color: black;
+}
+
+
+/* add new patient */
+
+.addPatientTitle{
+    color: black;
+
+}
+
+.addPatientFrom span{
+    /* color: white; */
+    margin-right: 5px
+}
+
+.addPatientFrom label{
+    color: black;
+    font-size: 15px;
+    padding-top: 12px;
+}
+
+/* .addPatientFrom input{
+    width: 300px;
+} */
+
+.Patient_ID{
+    margin-right: 740px;
+    color: black;
+    font-size: 16px;
+    font-weight: 600;
+    font-variant: normal;
+    font-style: normal;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.Patient_ID span{
+    color: grey;
+    font-weight: normal;
+    font-variant: normal;
+    font-style: normal;
+    /* cursor: pointer; */
+}

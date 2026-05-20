@@ -1,0 +1,7 @@
+{
+  "ajax": [
+    "/ajax/audit/log_list.php?start=0&length=10&search%5Bvalue%5D=&from=2026-05-03&to=2026-05-09&module_filter=&action_filter=",
+    "/ajax/audit/log_stats.php?from=2026-05-03&to=2026-05-09&module_filter=&action_filter="
+  ],
+  "requestCount": 147
+}

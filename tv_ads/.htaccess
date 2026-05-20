@@ -1,0 +1,41 @@
+# FIX_B_2341d: defense-in-depth — even though the uploader strictly validates
+# image dimensions/MIME and renames to <timestamp>-<slug>.<ext>, deny any
+# script execution inside this user-writable folder. A polyglot JPEG/PHP
+# would still fail getimagesize, but a misconfigured server elsewhere is no
+# excuse to leave the door ajar.
+
+# Apache 2.4+
+<IfModule mod_authz_core.c>
+  <FilesMatch "\.(php|php[0-9]|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp)$">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+
+# Apache 2.2 fallback
+<IfModule !mod_authz_core.c>
+  <FilesMatch "\.(php|php[0-9]|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp)$">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+</IfModule>
+
+# Belt-and-braces: stop PHP from being parsed even if .php somehow lands here.
+<IfModule mod_php7.c>
+  php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+  php_flag engine off
+</IfModule>
+
+# Block .htaccess and dotfiles from being served
+<FilesMatch "^\.">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+Options -ExecCGI -Indexes

@@ -1,0 +1,6 @@
+{
+  "ajax": [
+    "/ajax/patient_waiting/report_data.php"
+  ],
+  "requestCount": 144
+}

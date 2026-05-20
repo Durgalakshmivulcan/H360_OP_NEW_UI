@@ -1,0 +1,684 @@
+<div class="main-content">
+    <section class="section">
+        <ul class="breadcrumb breadcrumb-style">
+            <li class="breadcrumb-item">
+                <h4 class="page-title m-b-0">2D Echo Report</h4>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="dashboard.php">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                         fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </a>
+            </li>
+            <li class="breadcrumb-item">Service Management</li>
+            <li class="breadcrumb-item">2D Echo Report</li>
+        </ul>
+
+        <!-- Patient Search -->
+        <div class="card">
+            <div class="card-header"><h4>Patient Search</h4></div>
+            <div class="card-body">
+                <?php if ($SessionUserId == "1" && $SessionRoleId == "1"): ?>
+                <div class="row mb-3">
+                    <div class="form-group col-lg-4 col-sm-12">
+                        <label>Organization</label>
+                        <select class="form-control form-select" id="echo_org" onchange="fetchEchoPatients()">
+                            <option value="">Select Organization</option>
+                            <?php
+                            $orgQry = mysqli_query($conn, "SELECT org_id, organization_name FROM organization WHERE status='1' ORDER BY org_id ASC");
+                            while ($o = mysqli_fetch_object($orgQry)) {
+                                echo "<option value='{$o->org_id}'>{$o->organization_name}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <?php else: ?>
+                <input type="hidden" id="echo_org" value="<?= $SessionOrgId ?>">
+                <?php endif; ?>
+
+                <div class="row">
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>Patient Name</label>
+                        <select class="form-control form-select" id="echo_patientName">
+                            <option value="">Select Patient Name</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>Mobile</label>
+                        <select class="form-control form-select" id="echo_mobile">
+                            <option value="">Select Mobile</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>Patient ID</label>
+                        <select class="form-control form-select" id="echo_patientId">
+                            <option value="">Select Patient ID</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>Appointment ID</label>
+                        <select class="form-control form-select" id="echo_appointId">
+                            <option value="">Select Appointment ID</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card-footer text-center">
+                        <button type="button" class="btn btn-primary" onclick="loadEchoForm()">Load Patient</button>
+                        <button type="button" class="btn btn-secondary ms-2" onclick="newEchoReport()">New Report (Manual)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Echo Report Form -->
+        <div class="card" id="echoFormCard" style="display:none;">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 id="echoFormTitle">2D Echocardiographic Report</h4>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="resetEchoForm()">Clear</button>
+            </div>
+            <div class="card-body">
+                <input type="hidden" id="echo_report_id" value="">
+                <input type="hidden" id="echo_appointment_id" value="">
+                <input type="hidden" id="echo_patient_id_val" value="">
+
+                <!-- Patient Info -->
+                <div class="row mb-3">
+                    <div class="col-12"><h6 class="text-primary border-bottom pb-1">Patient Information</h6></div>
+                    <div class="form-group col-lg-4 col-sm-12">
+                        <label>Patient Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="echo_name" placeholder="Patient Name">
+                    </div>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label>Report Date</label>
+                        <input type="date" class="form-control" id="echo_date" value="<?= date('Y-m-d') ?>">
+                    </div>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label>Age</label>
+                        <input type="text" class="form-control" id="echo_age" placeholder="Age">
+                    </div>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label>Gender</label>
+                        <select class="form-control form-select" id="echo_gender">
+                            <option value="">Select</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-lg-4 col-sm-12">
+                        <label>Ref By (Referring Doctor)</label>
+                        <input type="text" class="form-control" id="echo_ref_by" placeholder="Referring Doctor">
+                    </div>
+                    <div class="form-group col-lg-8 col-sm-12">
+                        <label>Indication</label>
+                        <input type="text" class="form-control" id="echo_indication" placeholder="Clinical Indication">
+                    </div>
+                </div>
+
+                <!-- Valves -->
+                <div class="row mb-3">
+                    <div class="col-12"><h6 class="text-primary border-bottom pb-1">Valve Assessment</h6></div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>Mitral Valve</label>
+                        <input type="text" class="form-control" id="echo_mitral" value="Normal">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>Aortic Valve</label>
+                        <input type="text" class="form-control" id="echo_aortic" value="Normal">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>Tricuspid Valve</label>
+                        <input type="text" class="form-control" id="echo_tricuspid" value="Normal">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>Pulmonary Valve</label>
+                        <input type="text" class="form-control" id="echo_pulmonary_valve" value="Normal">
+                    </div>
+                </div>
+
+                <!-- Left Side -->
+                <div class="row mb-3">
+                    <div class="col-12"><h6 class="text-primary border-bottom pb-1">Left Heart</h6></div>
+
+                    <!-- Left Atrium -->
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>Left Atrium <small class="text-muted">(cm)</small></label>
+                        <input type="text" class="form-control" id="echo_left_atrium" placeholder="e.g. 3.2">
+                    </div>
+
+                    <!-- Left Ventricle sub-group -->
+                    <div class="col-12 mt-2 mb-1">
+                        <small class="fw-bold" >LEFT VENTRICLE</small>
+                        <hr class="mt-1 mb-2" style="border-color:#dee2e6;">
+                    </div>
+
+                    <!-- Row 1: LVID(d) | IVS  — mirrors print layout -->
+                    <div class="form-group col-lg-3 col-sm-6">
+                        <label>LVID(d) <small class="text-muted">(cm)</small></label>
+                        <input type="text" class="form-control" id="echo_lvid_d" placeholder="e.g. 4.0">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-6">
+                        <label>IVS <small class="text-muted">(cm)</small></label>
+                        <input type="text" class="form-control" id="echo_ivs_thickness" placeholder="e.g. 1.1">
+                    </div>
+
+                    <!-- Row 2: LVID(s) | PWD -->
+                    <div class="form-group col-lg-3 col-sm-6">
+                        <label>LVID(s) <small class="text-muted">(cm)</small></label>
+                        <input type="text" class="form-control" id="echo_lvid_s" placeholder="e.g. 2.6">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-6">
+                        <label>PWD <small class="text-muted">(cm)</small></label>
+                        <input type="text" class="form-control" id="echo_pwd" placeholder="e.g. 1.1">
+                    </div>
+
+                    <!-- Row 3: EF alone -->
+                    <div class="form-group col-lg-3 col-sm-6">
+                        <label>EF <small class="text-muted">(%)</small></label>
+                        <input type="text" class="form-control" id="echo_ef" placeholder="e.g. 64">
+                    </div>
+
+                    <!-- LV RWMA -->
+                    <div class="form-group col-lg-4 col-sm-12">
+                        <label>LV RWMA</label>
+                        <input type="text" class="form-control" id="echo_lv_rwma" value="NO RWMA">
+                    </div>
+                </div>
+
+                <!-- Right Side -->
+                <div class="row mb-3">
+                    <div class="col-12"><h6 class="text-primary border-bottom pb-1">Right Heart</h6></div>
+                    <div class="form-group col-lg-4 col-sm-12">
+                        <label>Right Atrium</label>
+                        <input type="text" class="form-control" id="echo_right_atrium" value="Normal">
+                    </div>
+                    <div class="form-group col-lg-4 col-sm-12">
+                        <label>Right Ventricle</label>
+                        <input type="text" class="form-control" id="echo_right_ventricle" value="Normal">
+                    </div>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label>TAPSE <small class="text-muted">(cm)</small></label>
+                        <input type="text" class="form-control" id="echo_tapse" placeholder="e.g. 1.9">
+                    </div>
+                </div>
+
+                <!-- Aorta & Pulmonary -->
+                <div class="row mb-3">
+                    <div class="col-12"><h6 class="text-primary border-bottom pb-1">Aorta &amp; Pulmonary</h6></div>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label>Aorta <small class="text-muted">(cm)</small></label>
+                        <input type="text" class="form-control" id="echo_aorta" placeholder="e.g. 1.9">
+                    </div>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label>AJV <small class="text-muted">(m/sec)</small></label>
+                        <input type="text" class="form-control" id="echo_ajv" placeholder="e.g. 1.1">
+                    </div>
+                    <div class="form-group col-lg-4 col-sm-12">
+                        <label>Pulmonary Artery</label>
+                        <input type="text" class="form-control" id="echo_pulmonary_artery" value="Normal">
+                    </div>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label>PJV <small class="text-muted">(m/sec)</small></label>
+                        <input type="text" class="form-control" id="echo_pjv" placeholder="e.g. 0.9">
+                    </div>
+                </div>
+
+                <!-- Septa & Other -->
+                <div class="row mb-3">
+                    <div class="col-12"><h6 class="text-primary border-bottom pb-1">Septa &amp; Other</h6></div>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label>IVS</label>
+                        <input type="text" class="form-control" id="echo_ivs_status" value="Intact">
+                    </div>
+                    <div class="form-group col-lg-2 col-sm-12">
+                        <label>IAS</label>
+                        <input type="text" class="form-control" id="echo_ias_status" value="Intact">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>IVC/SVC/CS</label>
+                        <input type="text" class="form-control" id="echo_ivc_svc_cs" value="Normal">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>Pericardium</label>
+                        <input type="text" class="form-control" id="echo_pericardium" value="No PE">
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>Mitral Flow</label>
+                        <input type="text" class="form-control" id="echo_mitral_flow" placeholder="e.g. E > A, a'>e'">
+                    </div>
+                </div>
+
+                <!-- Doppler -->
+                <div class="row mb-3">
+                    <div class="col-12"><h6 class="text-primary border-bottom pb-1">Doppler Study</h6></div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>MR</label>
+                        <select class="form-control form-select" id="echo_mr">
+                            <option value="NO">NO</option>
+                            <option value="TRIVIAL">TRIVIAL</option>
+                            <option value="MILD">MILD</option>
+                            <option value="MODERATE">MODERATE</option>
+                            <option value="SEVERE">SEVERE</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>AR</label>
+                        <select class="form-control form-select" id="echo_ar">
+                            <option value="NO">NO</option>
+                            <option value="TRIVIAL">TRIVIAL</option>
+                            <option value="MILD">MILD</option>
+                            <option value="MODERATE">MODERATE</option>
+                            <option value="SEVERE">SEVERE</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>TR</label>
+                        <select class="form-control form-select" id="echo_tr">
+                            <option value="NO">NO</option>
+                            <option value="TRIVIAL">TRIVIAL</option>
+                            <option value="MILD">MILD</option>
+                            <option value="MODERATE">MODERATE</option>
+                            <option value="SEVERE">SEVERE</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-lg-3 col-sm-12">
+                        <label>PR</label>
+                        <select class="form-control form-select" id="echo_pr">
+                            <option value="NO">NO</option>
+                            <option value="TRIVIAL">TRIVIAL</option>
+                            <option value="MILD">MILD</option>
+                            <option value="MODERATE">MODERATE</option>
+                            <option value="SEVERE">SEVERE</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Conclusion & Doctor -->
+                <div class="row mb-3">
+                    <div class="col-12"><h6 class="text-primary border-bottom pb-1">Conclusion &amp; Doctor</h6></div>
+                    <div class="form-group col-lg-12 col-sm-12">
+                        <label>Conclusion</label>
+                        <textarea class="form-control" id="echo_conclusion" rows="5"
+                            placeholder="Enter conclusion..."></textarea>
+                    </div>
+                    <div class="form-group col-lg-4 col-sm-12">
+                        <label>Doctor Name</label>
+                        <input type="text" class="form-control" id="echo_doctor_name" placeholder="e.g. Ashwin Kumar Panda">
+                    </div>
+                    <div class="form-group col-lg-8 col-sm-12">
+                        <label>Doctor Credentials</label>
+                        <input type="text" class="form-control" id="echo_doctor_cred"
+                            placeholder="e.g. DNB, DM (NIMS), Consultant Interventional Cardiologist">
+                    </div>
+                </div>
+
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary" id="saveEchoBtn">Save Report</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="card">
+            <div class="card-header"><h4>Echo Report History</h4></div>
+            <div class="card-body">
+                <div id="echoHistoryContainer">
+                    <p class="text-muted">Loading...</p>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
+
+<?php require_once("ajax/footer.php"); ?>
+
+<script>
+$(document).ready(function() {
+    <?php if ($SessionUserId != "1"): ?>
+    fetchEchoPatients();
+    <?php endif; ?>
+    loadEchoHistory();
+    $('#echo_patientName, #echo_mobile, #echo_patientId, #echo_appointId').select2();
+});
+
+// ---- Patient select2 population ----
+$(document).on('change', '#echo_patientName, #echo_mobile, #echo_patientId, #echo_appointId', function() {
+    echoPatientInfo($(this).attr('id'), $(this).val());
+});
+
+function fetchEchoPatients() {
+    var orgId = $('#echo_org').val() || '<?= $SessionOrgId ?>';
+    if (!orgId) return;
+    $.ajax({
+        url: 'ajax/Allpatientreports/fetchpatientdetails.php',
+        method: 'GET',
+        dataType: 'json',
+        data: { org_id: orgId },
+        success: function(data) {
+            $('#echo_patientName').empty().append('<option value="">Select Patient Name</option>');
+            $('#echo_mobile').empty().append('<option value="">Select Mobile</option>');
+            $('#echo_patientId').empty().append('<option value="">Select Patient ID</option>');
+            $('#echo_appointId').empty().append('<option value="">Select Appointment ID</option>');
+
+            var mobileMap = {}, unicodeMap = {}, registerMap = {};
+            (data.mobile_numbers    || []).forEach(function(i){ mobileMap[i.appoint_id]   = i.mobile_number; });
+            (data.patient_ids       || []).forEach(function(i){ unicodeMap[i.appoint_id]  = i.appoint_unicode; });
+            (data.appointment_ids   || []).forEach(function(i){ registerMap[i.appoint_id] = i.appoint_register_id; });
+
+            (data.patient_names || []).forEach(function(item) {
+                var id = item.appoint_id;
+                $('#echo_patientName').append('<option value="'+id+'">'+item.patient_name+'</option>');
+                if (mobileMap[id])   $('#echo_mobile').append('<option value="'+id+'">'+mobileMap[id]+'</option>');
+                if (unicodeMap[id])  $('#echo_patientId').append('<option value="'+id+'">'+unicodeMap[id]+'</option>');
+                if (registerMap[id]) $('#echo_appointId').append('<option value="'+id+'">'+registerMap[id]+'</option>');
+            });
+            ['#echo_patientName','#echo_mobile','#echo_patientId','#echo_appointId'].forEach(function(s){ $(s).trigger('change.select2'); });
+        }
+    });
+}
+
+function echoPatientInfo(fieldName, fieldValue) {
+    var orgId = $('#echo_org').val() || '<?= $SessionOrgId ?>';
+    $.ajax({
+        url: 'ajax/Allpatientreports/patientinformation.php',
+        type: 'POST',
+        data: { organization_id: orgId, fieldName: fieldName, fieldValue: fieldValue },
+        dataType: 'json',
+        success: function(resp) {
+            if (!resp.success) return;
+            var d = resp.data;
+            var updateSel = function(sel, val, id) {
+                var $s = $(sel);
+                if ($s.find("option[value='"+id+"']").length === 0)
+                    $s.append(new Option(val, id, true, true)).trigger('change.select2');
+                else
+                    $s.val(id).trigger('change.select2');
+            };
+            updateSel('#echo_patientName', d.patientName,       d.appoint_id);
+            updateSel('#echo_mobile',      d.mobileNumber,       d.appoint_id);
+            updateSel('#echo_patientId',   d.appointUnicode,     d.appoint_id);
+            updateSel('#echo_appointId',   d.appointRegisterId,  d.appoint_id);
+        }
+    });
+}
+
+// ---- Load patient data into form ----
+function loadEchoForm() {
+    var appoint_id = $('#echo_appointId').val();
+    var orgId = $('#echo_org').val() || '<?= $SessionOrgId ?>';
+    if (!appoint_id) {
+        swal('', 'Please select a patient first.', 'warning');
+        return;
+    }
+    $.ajax({
+        url: 'ajax/Allpatientreports/patientinformation.php',
+        type: 'POST',
+        data: { organization_id: orgId, fieldName: 'appointRegisterId', fieldValue: appoint_id },
+        dataType: 'json',
+        success: function(resp) {
+            if (!resp.success) return;
+            var d = resp.data;
+            // Fetch full appointment details for age/gender/doctor
+            $.ajax({
+                url: 'ajax/echoreport/getAppointmentDetails.php',
+                type: 'POST',
+                data: { appoint_id: appoint_id, org_id: orgId },
+                dataType: 'json',
+                success: function(r) {
+                    resetEchoForm(false);
+                    $('#echo_name').val(r.patient_name || d.patientName);
+                    $('#echo_date').val(r.appoint_date || '<?= date('Y-m-d') ?>');
+                    $('#echo_age').val(r.age || '');
+                    $('#echo_gender').val(r.gender || '');
+                    $('#echo_ref_by').val(r.doctor_name || '');
+                    $('#echo_appointment_id').val(d.appointRegisterId);
+                    $('#echo_patient_id_val').val(d.appointUnicode);
+                    $('#echoFormCard').show();
+                    $('#echoFormTitle').text('2D Echo Report — ' + (r.patient_name || d.patientName));
+                }
+            });
+        }
+    });
+}
+
+function newEchoReport() {
+    resetEchoForm(false);
+    $('#echoFormCard').show();
+    $('#echoFormTitle').text('2D Echocardiographic Report — New');
+}
+
+function resetEchoForm(hide) {
+    if (hide === undefined || hide === true) { $('#echoFormCard').hide(); }
+    $('#echo_report_id').val('');
+    $('#echo_appointment_id').val('');
+    $('#echo_patient_id_val').val('');
+    $('#echo_name').val('');
+    $('#echo_date').val('<?= date('Y-m-d') ?>');
+    $('#echo_age').val('');
+    $('#echo_gender').val('');
+    $('#echo_ref_by').val('');
+    $('#echo_indication').val('');
+    $('#echo_mitral').val('Normal');
+    $('#echo_aortic').val('Normal');
+    $('#echo_tricuspid').val('Normal');
+    $('#echo_pulmonary_valve').val('Normal');
+    $('#echo_left_atrium').val('');
+    $('#echo_lvid_d').val('');
+    $('#echo_lvid_s').val('');
+    $('#echo_ef').val('');
+    $('#echo_ivs_thickness').val('');
+    $('#echo_pwd').val('');
+    $('#echo_lv_rwma').val('NO RWMA');
+    $('#echo_right_atrium').val('Normal');
+    $('#echo_right_ventricle').val('Normal');
+    $('#echo_tapse').val('');
+    $('#echo_aorta').val('');
+    $('#echo_ajv').val('');
+    $('#echo_pulmonary_artery').val('Normal');
+    $('#echo_pjv').val('');
+    $('#echo_ivs_status').val('Intact');
+    $('#echo_ias_status').val('Intact');
+    $('#echo_ivc_svc_cs').val('Normal');
+    $('#echo_pericardium').val('No PE');
+    $('#echo_mitral_flow').val('');
+    $('#echo_mr').val('NO');
+    $('#echo_ar').val('NO');
+    $('#echo_tr').val('NO');
+    $('#echo_pr').val('NO');
+    $('#echo_conclusion').val('');
+    $('#echo_doctor_name').val('');
+    $('#echo_doctor_cred').val('');
+}
+
+// ---- Save ----
+$(document).on('click', '#saveEchoBtn', function() {
+    var name = $('#echo_name').val().trim();
+    if (!name) { swal('', 'Patient Name is required.', 'warning'); return; }
+
+    var orgId = $('#echo_org').val() || '<?= $SessionOrgId ?>';
+    $.ajax({
+        url: 'ajax/echoreport/saveEchoReport.php',
+        type: 'POST',
+        data: {
+            echo_report_id:       $('#echo_report_id').val(),
+            org_id:               orgId,
+            appointment_id:       $('#echo_appointment_id').val(),
+            patient_id:           $('#echo_patient_id_val').val(),
+            patient_name:         name,
+            report_date:          $('#echo_date').val(),
+            age:                  $('#echo_age').val(),
+            gender:               $('#echo_gender').val(),
+            ref_by:               $('#echo_ref_by').val(),
+            indication:           $('#echo_indication').val(),
+            mitral_valve:         $('#echo_mitral').val(),
+            aortic_valve:         $('#echo_aortic').val(),
+            tricuspid_valve:      $('#echo_tricuspid').val(),
+            pulmonary_valve:      $('#echo_pulmonary_valve').val(),
+            left_atrium:          $('#echo_left_atrium').val(),
+            lvid_d:               $('#echo_lvid_d').val(),
+            lvid_s:               $('#echo_lvid_s').val(),
+            ef:                   $('#echo_ef').val(),
+            ivs_thickness:        $('#echo_ivs_thickness').val(),
+            pwd:                  $('#echo_pwd').val(),
+            lv_rwma:              $('#echo_lv_rwma').val(),
+            right_atrium:         $('#echo_right_atrium').val(),
+            right_ventricle:      $('#echo_right_ventricle').val(),
+            tapse:                $('#echo_tapse').val(),
+            aorta:                $('#echo_aorta').val(),
+            ajv:                  $('#echo_ajv').val(),
+            pulmonary_artery:     $('#echo_pulmonary_artery').val(),
+            pjv:                  $('#echo_pjv').val(),
+            ivs_status:           $('#echo_ivs_status').val(),
+            ias_status:           $('#echo_ias_status').val(),
+            ivc_svc_cs:           $('#echo_ivc_svc_cs').val(),
+            pericardium:          $('#echo_pericardium').val(),
+            mitral_flow:          $('#echo_mitral_flow').val(),
+            doppler_mr:           $('#echo_mr').val(),
+            doppler_ar:           $('#echo_ar').val(),
+            doppler_tr:           $('#echo_tr').val(),
+            doppler_pr:           $('#echo_pr').val(),
+            conclusion:           $('#echo_conclusion').val(),
+            doctor_name:          $('#echo_doctor_name').val(),
+            doctor_credentials:   $('#echo_doctor_cred').val()
+        },
+        dataType: 'json',
+        success: function(resp) {
+            if (resp.success) {
+                swal('', resp.message, 'success').then(function() {
+                    resetEchoForm(true);
+                    loadEchoHistory();
+                });
+            } else {
+                swal('Error', resp.message, 'error');
+            }
+        }
+    });
+});
+
+// ---- History ----
+function loadEchoHistory() {
+    var orgId = $('#echo_org').val() || '<?= $SessionOrgId ?>';
+    $.ajax({
+        url: 'ajax/echoreport/getEchoReports.php',
+        type: 'POST',
+        data: { org_id: orgId },
+        success: function(html) {
+            $('#echoHistoryContainer').html(html);
+            if ($.fn.DataTable.isDataTable('#echoReportHistoryTable'))
+                $('#echoReportHistoryTable').DataTable().destroy();
+            $('#echoReportHistoryTable').DataTable({ order: [[0,'desc']], pageLength: 10 });
+        }
+    });
+}
+
+// ---- Edit ----
+$(document).on('click', '.edit-echo-btn', function() {
+    var id = $(this).data('id');
+    $.ajax({
+        url: 'ajax/echoreport/getEchoReportById.php',
+        type: 'POST',
+        data: { echo_report_id: id },
+        dataType: 'json',
+        success: function(resp) {
+            if (!resp.success) { swal('Error','Record not found','error'); return; }
+            var d = resp.data;
+            $('#echo_report_id').val(d.echo_report_id);
+            $('#echo_appointment_id').val(d.appointment_id || '');
+            $('#echo_patient_id_val').val(d.patient_id || '');
+            $('#echo_name').val(d.patient_name);
+            $('#echo_date').val(d.report_date);
+            $('#echo_age').val(d.age);
+            $('#echo_gender').val(d.gender);
+            $('#echo_ref_by').val(d.ref_by);
+            $('#echo_indication').val(d.indication);
+            $('#echo_mitral').val(d.mitral_valve);
+            $('#echo_aortic').val(d.aortic_valve);
+            $('#echo_tricuspid').val(d.tricuspid_valve);
+            $('#echo_pulmonary_valve').val(d.pulmonary_valve);
+            $('#echo_left_atrium').val(d.left_atrium);
+            $('#echo_lvid_d').val(d.lvid_d);
+            $('#echo_lvid_s').val(d.lvid_s);
+            $('#echo_ef').val(d.ef);
+            $('#echo_ivs_thickness').val(d.ivs_thickness);
+            $('#echo_pwd').val(d.pwd);
+            $('#echo_lv_rwma').val(d.lv_rwma);
+            $('#echo_right_atrium').val(d.right_atrium);
+            $('#echo_right_ventricle').val(d.right_ventricle);
+            $('#echo_tapse').val(d.tapse);
+            $('#echo_aorta').val(d.aorta);
+            $('#echo_ajv').val(d.ajv);
+            $('#echo_pulmonary_artery').val(d.pulmonary_artery);
+            $('#echo_pjv').val(d.pjv);
+            $('#echo_ivs_status').val(d.ivs_status);
+            $('#echo_ias_status').val(d.ias_status);
+            $('#echo_ivc_svc_cs').val(d.ivc_svc_cs);
+            $('#echo_pericardium').val(d.pericardium);
+            $('#echo_mitral_flow').val(d.mitral_flow);
+            $('#echo_mr').val(d.doppler_mr);
+            $('#echo_ar').val(d.doppler_ar);
+            $('#echo_tr').val(d.doppler_tr);
+            $('#echo_pr').val(d.doppler_pr);
+            $('#echo_conclusion').val(d.conclusion);
+            $('#echo_doctor_name').val(d.doctor_name);
+            $('#echo_doctor_cred').val(d.doctor_credentials);
+            $('#echoFormCard').show();
+            $('#echoFormTitle').text('Edit Echo Report — ' + d.patient_name);
+            $('html, body').animate({ scrollTop: $('#echoFormCard').offset().top - 20 }, 400);
+        }
+    });
+});
+
+// ---- Delete ----
+$(document).on('click', '.delete-echo-btn', function() {
+    var id = $(this).data('id');
+    swal({ title: 'Delete this report?', text: 'This cannot be undone.', icon: 'warning',
+           buttons: ['Cancel', 'Delete'], dangerMode: true })
+    .then(function(confirm) {
+        if (!confirm) return;
+        $.ajax({
+            url: 'ajax/echoreport/deleteEchoReport.php',
+            type: 'POST',
+            data: { echo_report_id: id },
+            dataType: 'json',
+            success: function(resp) {
+                if (resp.success) { swal('', resp.message, 'success').then(loadEchoHistory); }
+                else { swal('Error', resp.message, 'error'); }
+            }
+        });
+    });
+});
+
+// ---- View (print) ----
+var _echoViewUrl = <?= json_encode(
+    (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']==='on' ? 'https' : 'http')
+    . '://' . $_SERVER['HTTP_HOST']
+    . rtrim(dirname($_SERVER['SCRIPT_NAME']), '/')
+    . '/ajax/echoreport/viewEchoReport.php'
+) ?>;
+
+function viewEchoReport(id) {
+    if (!id) { swal('', 'Invalid report ID.', 'error'); return; }
+    var f = document.createElement('form');
+    f.method = 'POST'; f.action = _echoViewUrl; f.target = '_blank';
+    var inp = document.createElement('input');
+    inp.type = 'hidden'; inp.name = 'echo_report_id'; inp.value = id;
+    f.appendChild(inp);
+    document.body.appendChild(f);
+    f.submit();
+    document.body.removeChild(f);
+}
+
+<?php if ($SessionUserId == "1"): ?>
+$(document).on('change', '#echo_org', function() {
+    fetchEchoPatients();
+    loadEchoHistory();
+});
+<?php endif; ?>
+</script>

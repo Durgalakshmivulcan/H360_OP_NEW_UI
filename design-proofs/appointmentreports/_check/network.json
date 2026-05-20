@@ -1,0 +1,6 @@
+{
+  "ajax": [
+    "/ajax/AppointmentBooking/getappointmentreportsdata.php"
+  ],
+  "requestCount": 144
+}

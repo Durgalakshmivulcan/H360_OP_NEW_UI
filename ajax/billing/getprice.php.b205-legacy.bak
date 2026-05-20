@@ -1,0 +1,54 @@
+<?php
+require_once("../../config/config.php");
+
+// $getAdminconsult = mysqli_query($conn, "SELECT * FROM department WHERE status='1' ORDER BY id DESC") or die(mysqli_error($conn));
+$getAdminconsult = mysqli_query($conn, "SELECT SUM(dep_fee) AS TotalItemsOrdered FROM department ") or die(mysqli_error($conn));
+
+
+$i = 1;
+$total=0;
+$total1=0;
+while($resAdminconsult = mysqli_fetch_object($getAdminconsult)){
+      
+
+    $price=$resAdminconsult->dep_fee;
+    $total =$total+$price;
+    // $tot += (float)$price['dep-fee'];
+
+   
+   $getpayment = mysqli_query($conn, "SELECT SUM(card) AS paymentcard, SUM(upi) AS paymentupi FROM payment ") or die(mysqli_error($conn));
+
+   while($respayment = mysqli_fetch_object($getpayment)) {
+    
+    
+    $price1=$getpayment->card;
+    $total1 = $total1+$price1;
+
+   }
+    
+    // echo $total;
+//     $resAdminconsult = $getAdminconsult ['dep_fee'];
+//    $totalPrice += $resAdminconsult;   
+?>
+
+    <tr>
+        <td> <?=$i++;?> </td>
+        <td> <?=$resAdminconsult->TotalItemsOrdered?> </td>
+        <td> <?=$getpayment->paymentcard ?></td>
+        <td>  </td>
+        <td class="text-center">
+            <ul class="navbar-nav">
+                <li class="dropdown">
+                    <a href="#" data-bs-toggle="dropdown" class="nav-link" style="color:black">
+                        <!-- <i class="fa fa-ellipsis-v"></i> -->
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-left">
+                        <a href="#" class="dropdown-item has-icon" onclick='editMenus(`<?=$resAdminconsult->dept_id?>`,`<?=$resAdminconsult->patient_name ?>`, `<?=$resAdminconsult->date ?>`, `<?=$resAdminconsult->time ?>`, `<?=$resAdminconsult->contact ?>`, `<?=$resAdminconsult->consul_fee ?>`)'> <i class="fa fa-edit"></i> Update</a>
+                        <a class="dropdown-item has-icon" style="cursor:pointer;" onclick="deleteMenus('<?=$resAdminconsult->dept_id?>', '<?=$resAdminconsult->patient_name ?>')"> <i class="fa fa-trash"></i> Delete</a>
+                    </div>
+                </li>
+            </ul>
+        </td>
+    </tr>
+
+<?php } ?>

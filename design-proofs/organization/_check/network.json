@@ -1,0 +1,14 @@
+{
+  "ajax": [
+    "/ajax/dashbord/getDoctorSlotStats.php?security_id=2",
+    "/ajax/dashbord/get_dashboard_lists.php?security_id=2",
+    "/ajax/dashbord/get_dashboard_metrics.php?security_id=2",
+    "/ajax/dashbord/getdate.php",
+    "/ajax/dashbord/getdepartment.php",
+    "/ajax/dashbord/getdocservice.php",
+    "/ajax/dashbord/gettopprescribedtests.php",
+    "/ajax/dashbord/getuserlist.php",
+    "/ajax/organization/GetOrganization.php"
+  ],
+  "requestCount": 156
+}

@@ -1,0 +1,9 @@
+{
+  "ajax": [
+    "/ajax/PatientsOutcomeReport/op_patient_outcome_charts.php?from=2026-04-10&to=2026-05-09&doctor=&search_text=",
+    "/ajax/PatientsOutcomeReport/op_patient_outcome_doctors.php",
+    "/ajax/PatientsOutcomeReport/op_patient_outcome_export.php?start=0&length=10&search%5Bvalue%5D=&from=2026-04-10&to=2026-05-09&doctor=&search_text=",
+    "/ajax/PatientsOutcomeReport/op_patient_outcome_kpis.php?from=2026-04-10&to=2026-05-09&doctor=&search_text="
+  ],
+  "requestCount": 149
+}
