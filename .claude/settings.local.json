@@ -29,7 +29,12 @@
       "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root h360_op -e \"SELECT patient_name, dob, mobile_number, org_id FROM appointment_online WHERE DATE_FORMAT\\(dob,'%m-%d'\\) = '05-21' AND appoint_status='1' LIMIT 5;\")",
       "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root h360_op -e \"SELECT s.security_id, s.admin_name, s.role_id, s.org_id FROM security s JOIN roles r ON r.role_id=s.role_id WHERE s.status='1' AND s.role_id=2 LIMIT 5;\")",
       "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root h360_op -e \"SELECT patient_name, dob, org_id FROM appointment_online WHERE DATE_FORMAT\\(dob,'%m-%d'\\) = '05-21' AND appoint_status='1' AND org_id IN \\(1,2,3\\);\")",
-      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root h360_op -e \"SELECT d.doc_id, d.doctor_name, d.org_id, s.security_id FROM doctors d JOIN security s ON s.security_id=d.security_id WHERE d.status='1' ORDER BY d.org_id;\")"
+      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root h360_op -e \"SELECT d.doc_id, d.doctor_name, d.org_id, s.security_id FROM doctors d JOIN security s ON s.security_id=d.security_id WHERE d.status='1' ORDER BY d.org_id;\")",
+      "Bash(php -r 'require_once '\\\\''config/functions.php'\\\\''; $r = mysqli_query\\($conn, '\\\\''SHOW COLUMNS FROM organization LIKE \"org_stamp\"'\\\\''\\); echo mysqli_num_rows\\($r\\) ? '\\\\''exists'\\\\'' : '\\\\''missing'\\\\'';')",
+      "Bash(php -r 'require_once '\\\\''config/functions.php'\\\\''; mysqli_query\\($conn, '\\\\''ALTER TABLE organization ADD COLUMN org_stamp VARCHAR\\(255\\) NOT NULL DEFAULT \"\" AFTER logo_without_text'\\\\''\\); echo mysqli_error\\($conn\\) ?: '\\\\''ok'\\\\'';')",
+      "Bash(php -r 'require_once '\\\\''config/functions.php'\\\\''; $r = mysqli_query\\($conn, \"SELECT role_id, role_name FROM roles WHERE status='\\\\''1'\\\\'' ORDER BY role_id\"\\); while\\($row = mysqli_fetch_assoc\\($r\\)\\) echo $row['\\\\''role_id'\\\\''].'\\\\'': '\\\\''.$row['\\\\''role_name'\\\\''].PHP_EOL;')",
+      "Bash(php -r ' *)",
+      "Bash(php *)"
     ]
   }
 }

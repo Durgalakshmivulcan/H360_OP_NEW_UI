@@ -291,6 +291,11 @@ requireCan('view', basename(__FILE__));
       ['view','add','edit','delete'].forEach(function(action) {
         if ($('#perm_' + action + '_' + menuId).is(':checked')) perms.push(action);
       });
+      // Parent menus have no permission checkboxes in the UI — default to 'view'
+      // so the sidebar FIND_IN_SET('view', permissions) gate passes.
+      if (perms.length === 0 && $('#perm_view_' + menuId).length === 0) {
+        perms = ['view'];
+      }
       permissions[menuId] = perms.join(',');
       var hidden = $('#access' + menuId);
       var hasView = perms.indexOf('view') !== -1;

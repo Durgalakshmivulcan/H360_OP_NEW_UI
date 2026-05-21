@@ -8,9 +8,6 @@
     }
 
     .print-div {
-        width: 148mm;
-        height: 210mm;
-        border: 1px solid black;
         padding: 10px;
         box-sizing: border-box;
     }

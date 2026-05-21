@@ -149,6 +149,18 @@ require_once("ajax/header.php");
                             </div>
 
                         <div class="form-group col-lg-4 col-sm-12">
+                            <label for="stamp_file">Authorised Signatory Stamp</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-patch-check-fill"></i></span>
+                                <input type="file" class="form-control" id="stamp_file" accept=".jpg,.jpeg,.png">
+                            </div>
+                            <small class="text-muted">JPG / PNG, max 1.5 MB. Upload only when editing an existing org.</small>
+                            <div id="stampPreview" style="margin-top:6px;display:none;">
+                                <img id="stampPreviewImg" src="" alt="Stamp preview" style="max-height:80px;border:1px solid #dee2e6;border-radius:4px;padding:4px;">
+                            </div>
+                        </div>
+
+                        <div class="form-group col-lg-4 col-sm-12">
                             <label for="userLimit">User Limit <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text">
@@ -541,6 +553,51 @@ $("#FormId").submit(function(event) {
     });
 }
 
+
+// Stamp preview
+$('#stamp_file').on('change', function () {
+    var file = this.files[0];
+    if (!file) { $('#stampPreview').hide(); return; }
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        $('#stampPreviewImg').attr('src', e.target.result);
+        $('#stampPreview').show();
+    };
+    reader.readAsDataURL(file);
+});
+
+// Upload stamp immediately when a file is chosen (only works when editing an existing org)
+$('#stamp_file').on('change', function () {
+    var orgId = $('#org_id').val();
+    if (!orgId) {
+        swal('', 'Please save the organisation first, then upload the stamp.', 'info');
+        $(this).val('');
+        $('#stampPreview').hide();
+        return;
+    }
+    var file = this.files[0];
+    if (!file) return;
+    var fd = new FormData();
+    fd.append('org_id', orgId);
+    fd.append('stamp_file', file);
+    $.ajax({
+        url: 'ajax/organization/UploadStamp.php',
+        type: 'POST',
+        data: fd,
+        contentType: false,
+        processData: false,
+        success: function (res) {
+            if (res.success) {
+                swal('', 'Stamp uploaded successfully!', 'success');
+            } else {
+                swal('', 'Stamp upload failed: ' + res.message, 'error');
+            }
+        },
+        error: function () {
+            swal('', 'Stamp upload request failed.', 'error');
+        }
+    });
+});
 
 // Edit function remains the same
 function editOrganization(org_id, organization_name, contact, email, description, gstNumber, tanNumber, longitude, latitude, address, userLimit, opipaccess) {

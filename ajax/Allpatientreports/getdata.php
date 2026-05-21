@@ -320,8 +320,8 @@ $result = mysqli_query($conn, $query);
                         Final Diagnosis : <?= !empty($prescription['finalDiagnosis']) ? ucfirst($prescription['finalDiagnosis']) : 'N/A' ?>
                     </div>
 
-                    <div class="prescription-view btn btn-primary btn-sm" type="button">
-                        <a href="javascript:void(0);" class="view-details-btn text-primary">VIEW</a>
+                    <div class="prescription-view">
+                        <a href="javascript:void(0);" class="btn btn-primary btn-sm view-details-btn">VIEW</a>
                     </div>
 
                     <div class="prescription-details">

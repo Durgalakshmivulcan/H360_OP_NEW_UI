@@ -1,5 +1,5 @@
 <?php
-require_once("ajax/header.php");
+require_once("config/functions.php");
 
 $SessionUserId = $_SESSION['security_id'] ?? '';
 $SessionOrgId  = $_SESSION['org_id'] ?? '';
@@ -40,8 +40,11 @@ $logoSrc   = (!empty($logoFile) && file_exists($uploadDir . $logoFile))
     ? $baseUrl . '/organisation_images/' . rawurlencode($logoFile)
     : $baseUrl . '/assets/img/h360.png';
 
-// Stamp
-$stampSrc = file_exists(__DIR__ . '/img/Stamp Logo.png') ? $baseUrl . '/img/Stamp%20Logo.png' : '';
+// Stamp — per-org from organisation_stamp/
+$stampFile = $org['org_stamp'] ?? '';
+$stampSrc  = (!empty($stampFile) && file_exists(__DIR__ . '/organisation_stamp/' . $stampFile))
+    ? $baseUrl . '/organisation_stamp/' . rawurlencode($stampFile)
+    : '';
 
 // ── Bill date ─────────────────────────────────────────────────────────────────
 // FIX_B_910: side-effecting GET hardened — UPDATE is now set-once-on-first-print
@@ -173,8 +176,8 @@ $sno = 0;
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: Arial, sans-serif; font-size: 12px; background: #f5f5f5; color: #000; }
 
-.no-print { background: #fff; padding: 8px 16px; text-align: right; border-bottom: 1px solid #ccc; position: sticky; top: 0; z-index: 99; }
-.no-print button { padding: 6px 20px; background: #1a56a0; color: #fff; border: none; border-radius: 3px; cursor: pointer; font-size: 13px; }
+.no-print { background: #fff; text-align: right; border-bottom: 1px solid #ccc; position: sticky; top: 0; z-index: 99; }
+.no-print button { padding: 6px 20px; background: #1a56a0; color: #ffd966; border: none; border-radius: 3px; cursor: pointer; font-size: 13px; }
 
 /* Page */
 .page {

@@ -353,6 +353,11 @@ $query = "
 
 
 <script>
+  // Prevent scroll wheel from changing number input values
+  $(document).on('wheel', 'input[type=number]', function() {
+    $(this).blur();
+  });
+
   $(document).ready(function(){
 
     GetView();

@@ -194,18 +194,31 @@ $msg    = 0;
             }    
     }
 
-// Assign P-code if the registered role is Pharmacist
+// Assign role-based user code on create (P = Pharmacist, R = Receptionist, D = Doctor)
 if ($msg == 1 || $msg == 2) {
     ensureUserCodeColumn($conn);
     $targetId = ($msg == 1) ? (int)($newId ?? 0) : (int)$security_id;
     if ($targetId > 0) {
         $rnQ = mysqli_query($conn, "SELECT role_name FROM roles WHERE role_id='" . (int)$role_id . "' LIMIT 1");
         if ($rnQ && $rn = mysqli_fetch_assoc($rnQ)) {
-            if (strtolower(trim($rn['role_name'])) === 'pharmacist') {
-                $chkP = mysqli_fetch_assoc(mysqli_query($conn, "SELECT user_code FROM security WHERE security_id='$targetId' LIMIT 1"));
-                if (empty($chkP['user_code']) || substr($chkP['user_code'], 0, 1) !== 'P') {
-                    $pCode = generateUserCode($conn, 'P');
-                    mysqli_query($conn, "UPDATE security SET user_code='$pCode' WHERE security_id='$targetId' AND org_id='$SessionOrgId'");
+            $roleName = strtolower(trim($rn['role_name']));
+            if ($roleName === 'pharmacist') {
+                $chk = mysqli_fetch_assoc(mysqli_query($conn, "SELECT user_code FROM security WHERE security_id='$targetId' LIMIT 1"));
+                if (empty($chk['user_code']) || substr($chk['user_code'], 0, 1) !== 'P') {
+                    $code = generateUserCode($conn, 'P');
+                    mysqli_query($conn, "UPDATE security SET user_code='$code' WHERE security_id='$targetId'");
+                }
+            } elseif ($roleName === 'receptionist') {
+                $chk = mysqli_fetch_assoc(mysqli_query($conn, "SELECT user_code FROM security WHERE security_id='$targetId' LIMIT 1"));
+                if (empty($chk['user_code']) || substr($chk['user_code'], 0, 1) !== 'R') {
+                    $code = generateUserCode($conn, 'R');
+                    mysqli_query($conn, "UPDATE security SET user_code='$code' WHERE security_id='$targetId'");
+                }
+            } elseif ($roleName === 'doctor') {
+                $chk = mysqli_fetch_assoc(mysqli_query($conn, "SELECT user_code FROM security WHERE security_id='$targetId' LIMIT 1"));
+                if (empty($chk['user_code']) || substr($chk['user_code'], 0, 1) !== 'D') {
+                    $code = generateUserCode($conn, 'D');
+                    mysqli_query($conn, "UPDATE security SET user_code='$code' WHERE security_id='$targetId'");
                 }
             }
         }

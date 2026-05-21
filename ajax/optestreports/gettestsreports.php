@@ -47,6 +47,7 @@ $doctorCondition  = !empty($allowedDoctorIds)
                 <?php if($SessionUserId=="1") echo "<th>Organization</th>"; ?>
                 <th>Patient ID</th>
                 <th>Appointment ID</th>
+                <th>Patient Name</th>
                 <th>Performed At</th>
                 <th>Type</th> 
                 <th>Test Name</th>
@@ -61,7 +62,7 @@ $doctorCondition  = !empty($allowedDoctorIds)
         // FIX_B_1903: doctor-scope filter (defense-in-depth alongside doctorCondition)
         $docScope = currentDoctorScopeSql('ao.doctor_name');
         $getReports = mysqli_query($conn,"
-            SELECT t.*, tm.test_name AS master_name
+            SELECT t.*, tm.test_name AS master_name, ao.patient_name AS ao_patient_name
             FROM patient_tests_history t
             LEFT JOIN tests tm ON t.test_name = tm.test_id
             LEFT JOIN appointment_online ao ON t.appointment_id = ao.appoint_register_id
@@ -85,6 +86,7 @@ $doctorCondition  = !empty($allowedDoctorIds)
                 <?php if($SessionUserId=="1") echo "<td>".getUserNameByOrgId($conn,$r->org_id)."</td>"; ?>
                 <td><?= htmlspecialchars($r->patient_id) ?></td>
                 <td><?= htmlspecialchars($r->appointment_id) ?></td>
+                <td><?= htmlspecialchars($r->ao_patient_name ?? '') ?></td>
                 <td><?= htmlspecialchars($r->performed_at) ?></td>
                 <td><?= htmlspecialchars($r->file_type) ?></td>
                 <td><?= htmlspecialchars($displayName) ?></td>

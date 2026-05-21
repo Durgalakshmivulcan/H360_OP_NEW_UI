@@ -78,11 +78,10 @@ $icons = [
                             <!-- <a href="outside_tests.php?patient_id=<?= urlencode($appointUnicode) ?>&org_id=<?= urlencode($orgId) ?>" 
                                         class="btn btn-primary btn-sm ms-3">View</a> -->
                             <div class="ps-4 float-right">
-                                <span class="bullet" style="color: #6777ef"></span>
+                                <span class="bullet" style="color:#6777ef"></span>
                                 <a href="javascript:void(0);"
-                                    class="text-job view-old-prescription"
-                                    data-ids="<?= $patient_id ?>"
-                                    style="color: #6777ef">View</a>
+                                    class="btn btn-primary btn-sm view-old-prescription"
+                                    data-ids="<?= $patient_id ?>">View</a>
                             </div>
                         </div>
                     </div>
@@ -151,21 +150,19 @@ $icons = [
 
                                     <?php if (!empty($prescriptionIds)): ?>
                                         <div class="ps-4 float-right">
-                                            <span class="bullet" style="color: #6777ef"></span>
+                                            <span class="bullet" style="color:#6777ef"></span>
                                             <a href="javascript:void(0);"
-                                                class="text-job view-prescription"
-                                                data-ids="<?= htmlspecialchars($prescriptionIds) ?>"
-                                                style="color: #6777ef">View</a>
+                                                class="btn btn-primary btn-sm view-prescription"
+                                                data-ids="<?= htmlspecialchars($prescriptionIds) ?>">View</a>
                                         </div>
                                     <?php endif; ?>
 
                                     <?php foreach ($gynaecRxList as $gr): ?>
                                         <div class="ps-4 float-right ms-2">
-                                            <span class="badge bg-danger" style="font-size:0.75em;">Gynaec</span>
+                                            <span class="bullet" style="color:#e03232"></span>
                                             <a href="javascript:void(0);"
-                                                class="text-job view-gynaec-prescription"
-                                                data-id="<?= (int)$gr['gynaec_rx_id'] ?>"
-                                                style="color: #dc3545;">View</a>
+                                                class="btn btn-danger btn-sm view-gynaec-prescription"
+                                                data-id="<?= (int)$gr['gynaec_rx_id'] ?>">Gynaec View</a>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>

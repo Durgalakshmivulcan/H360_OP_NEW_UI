@@ -456,7 +456,7 @@ $docScope_B1903 = currentDoctorScopeSql('doctor_name');
                         <select class="form-control" id="grx_med_concession" name="grx_med_concession">
                             <option value="">No Discount</option>
                             <?php
-                            $getMedConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1'") or die(mysqli_error($conn));
+                            $getMedConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1' AND org_id='$SessionOrgId'") or die(mysqli_error($conn));
                             while ($cRow = mysqli_fetch_assoc($getMedConcessions)) {
                                 echo '<option value="'.$cRow['concession_id'].'"
                                     data-type="'.htmlspecialchars($cRow['concession_type']).'"
@@ -511,7 +511,7 @@ $docScope_B1903 = currentDoctorScopeSql('doctor_name');
                         <select class="form-control" id="grx_concession" name="grx_concession">
                             <option value="">Select Concession</option>
                             <?php
-                            $getConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1'") or die(mysqli_error($conn));
+                            $getConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1' AND org_id='$SessionOrgId'") or die(mysqli_error($conn));
                             while ($rowC = mysqli_fetch_assoc($getConcessions)) {
                                 echo '<option value="'.$rowC['concession_id'].'"
                                     data-type="'.htmlspecialchars($rowC['concession_type']).'"

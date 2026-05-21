@@ -725,7 +725,7 @@
                                 <select class="form-control" name="med_concession" id="med_concession">
                                     <option value="">No Discount</option>
                                     <?php
-                                    $getMedConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1'") or die(mysqli_error($conn));
+                                    $getMedConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1' AND org_id='$SessionOrgId'") or die(mysqli_error($conn));
                                     while ($cRow = mysqli_fetch_assoc($getMedConcessions)) {
                                         echo '<option value="' . $cRow['concession_id'] . '"
                                                 data-type="' . $cRow['concession_type'] . '"
@@ -832,10 +832,10 @@
                                 <select class="form-control" name="concession" id="concession">
                                     <option value="">Select Concession</option>
                                     <?php
-                                    $getConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1'") or die(mysqli_error($conn));
+                                    $getConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1' AND org_id='$SessionOrgId'") or die(mysqli_error($conn));
                                     while ($row = mysqli_fetch_assoc($getConcessions)) {
-                                        echo '<option value="' . $row['concession_id'] . '" 
-                                                        data-type="' . $row['concession_type'] . '" 
+                                        echo '<option value="' . $row['concession_id'] . '"
+                                                        data-type="' . $row['concession_type'] . '"
                                                         data-value="' . $row['concession_value'] . '">'
                                             . $row['concession_name'] .
                                             '</option>';
@@ -1062,10 +1062,10 @@
                 <select class="form-control" id="edit_concession">
                     <option value="">Select Concession</option>
                     <?php
-                    $getConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1'") or die(mysqli_error($conn));
+                    $getConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1' AND org_id='$SessionOrgId'") or die(mysqli_error($conn));
                     while ($row = mysqli_fetch_assoc($getConcessions)) {
-                        echo '<option value="' . $row['concession_id'] . '" 
-                            data-type="' . $row['concession_type'] . '" 
+                        echo '<option value="' . $row['concession_id'] . '"
+                            data-type="' . $row['concession_type'] . '"
                             data-value="' . $row['concession_value'] . '">'
                             . $row['concession_name'] .
                             '</option>';

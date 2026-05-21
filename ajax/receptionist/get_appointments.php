@@ -56,7 +56,8 @@ $sql = "
         a.org_id AS AppointOrgId,
         a.appoint_id,
         a.invoice_payment,
-        -- FIX_B_072: surface payment details for receptionist board cols 13-15.
+        -- FIX_B_072: surface payment details for receptionist board cols 12-15.
+        a.amount_method,
         a.transaction_number,
         a.transaction_amount,
         a.cash_amount,
@@ -116,6 +117,10 @@ if ($result) {
             'amount'             => $row['amount'] ?? null,
             'appoint_unicode'    => $row['appoint_unicode'] ?? null,
             'has_prescription'   => !empty($row['prescription_id']) ? true : false,
+            'amount_method'      => $row['amount_method'] ?? null,
+            'transaction_number' => $row['transaction_number'] ?? null,
+            'transaction_amount' => $row['transaction_amount'] ?? null,
+            'cash_amount'        => $row['cash_amount'] ?? null,
         ];
     }
 }

@@ -197,6 +197,16 @@ if ($doc_name != "" && $Gender != "" && $specialtis != "" && $doc_services != ""
                     // log doctor create
                     audit_log($conn, "Doctors", "create", "doctor", $newId, null, $after);
 
+                    // Assign D-code to the doctor's security account
+                    if (!empty($securityId)) {
+                        ensureUserCodeColumn($conn);
+                        $chkD = mysqli_fetch_assoc(mysqli_query($conn, "SELECT user_code FROM security WHERE security_id='" . (int)$securityId . "' LIMIT 1"));
+                        if (empty($chkD['user_code']) || substr($chkD['user_code'], 0, 1) !== 'D') {
+                            $dCode = generateUserCode($conn, 'D');
+                            mysqli_query($conn, "UPDATE security SET user_code='$dCode' WHERE security_id='" . (int)$securityId . "'");
+                        }
+                    }
+
                     // ----------------- RECEPTIONIST INSERT -----------------
                     $recAfter = [];
                     foreach ($receptionistIds as $index => $receptionistId) {

@@ -35,34 +35,24 @@
             }
             $menuUrls = array_filter($menuUrls);
             $currentPage = trim(basename($_SERVER['PHP_SELF']));
-            // FIX_B_1200: SA/admin-only pages must reject other roles (e.g.
-            // role_id=3 receptionist, role_id=4 pharmacist) instead of
-            // rendering the page. The full menu-mapping block above is too
-            // sweeping (would block dashboard, profile, etc.). Use a tight
-            // deny-list keyed off the canonical role_menus assignment.
-            $restrictedPages = [
-                // FIX_B_1920: Clinic Manager (role_id=6, Dinesh) is an Admin-class
-                // role who manages the clinic (staff, slots, billing, reports)
-                // but is NOT a doctor and CANNOT create new doctors (the
-                // 'add' permission is revoked at the role_menus.permissions
-                // SET level). Add him to the whitelist for the admin-class
-                // pages he needs.
-                'registration.php'         => [1, 2, 6],  // SA + Admin + Clinic Manager
-                'menus.php'                => [1],         // SA only
-                'roles.php'                => [1, 2, 6],  // SA + Admin + Clinic Manager
-                // FIX_B_1400: Accountant (role_id=5) is finance-only and
-                // must NOT reach clinical / appointment / prescription
-                // surfaces. Admin (2), Receptionist (11) keep front-desk
-                // surfaces; Admin (2) acts as Doctor for prescriptions.
-                'AppointmentOnline.php'    => [1, 2, 3, 6],
-                'prescription.php'         => [1, 2],      // doctors only (gated further by specialization)
-                'gynaec_prescription.php'  => [1, 2],      // doctors only (gated further to gynec specialty)
-                'doctor.php'               => [1, 2, 6],  // Clinic Manager can VIEW (add gated by role_menus)
-            ];
-            if (isset($restrictedPages[$currentPage])
-                && !in_array((int)$SessionRoleId, $restrictedPages[$currentPage], true)) {
-                header("Location: dashboard.php");
-                exit;
+            // Gate pages by role_menus database permissions (userCan) instead of
+            // hardcoded role_id arrays, so any role assigned the menu via the
+            // Roles UI is automatically allowed through without touching this file.
+            // menus.php is SA-only (no role_menus row; only security_id=1 may see it).
+            if ($currentPage === 'menus.php') {
+                if ((string)$SessionUserId !== '1') {
+                    header("Location: dashboard.php");
+                    exit;
+                }
+            } else {
+                $hardGatedPages = [
+                    'registration.php', 'roles.php', 'AppointmentOnline.php',
+                    'prescription.php', 'gynaec_prescription.php', 'doctor.php',
+                ];
+                if (in_array($currentPage, $hardGatedPages, true) && !userCan('view', $currentPage)) {
+                    header("Location: dashboard.php");
+                    exit;
+                }
             }
 
             // FIX_B_2250: Specialization gate must fire BEFORE the <!DOCTYPE>

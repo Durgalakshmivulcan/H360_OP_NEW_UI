@@ -89,10 +89,18 @@ if ($role_name != '' && is_array($menus_ids) && count($menus_ids) > 0) {
                     array_map('trim', explode(',', strtolower($rawPerm))),
                     $allowed
                 ));
-                // Fallback when client didn't send permissions: derive from
-                // legacy menu_access — '1' → all 4, '0' → empty.
+                // Fallback A: client sent nothing — derive from legacy menu_access.
                 if (empty($perms) && !isset($permissions_in[$menu_id])) {
                     $perms = ($access === '1') ? $allowed : [];
+                }
+                // Fallback B: client sent an empty string (parent menus have no
+                // permission checkboxes, so the JS loop produces '').
+                // Parent menus only need 'view' so the sidebar gate passes.
+                if (empty($perms) && isset($permissions_in[$menu_id]) && $permissions_in[$menu_id] === '' && $access === '1') {
+                    $pmChk = mysqli_query($conn, "SELECT menu_type FROM menus WHERE menu_id='" . (int)$menu_id . "' LIMIT 1");
+                    if ($pmChk && ($pmRow = mysqli_fetch_assoc($pmChk)) && $pmRow['menu_type'] === 'p') {
+                        $perms = ['view'];
+                    }
                 }
                 $permsCsv = mysqli_real_escape_string($conn, implode(',', $perms));
                 $ok = mysqli_query($conn, "

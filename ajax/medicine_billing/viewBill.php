@@ -51,7 +51,10 @@ $logoSrc   = (!empty($logoFile) && file_exists($uploadDir . $logoFile))
     ? $baseUrl . '/organisation_images/' . rawurlencode($logoFile)
     : $baseUrl . '/assets/img/h360.png';
 
-$stampSrc = file_exists(__DIR__ . '/../../img/Stamp Logo.png') ? $baseUrl . '/img/Stamp%20Logo.png' : '';
+$stampFile = $org['org_stamp'] ?? '';
+$stampSrc  = (!empty($stampFile) && file_exists(__DIR__ . '/../../organisation_stamp/' . $stampFile))
+    ? $baseUrl . '/organisation_stamp/' . rawurlencode($stampFile)
+    : '';
 
 // Billing items
 $itemQry = mysqli_query($conn, "SELECT * FROM patient_medicine_billing_items WHERE medicine_billing_id='$billingId' ORDER BY medicine_billing_item_id ASC") or die(mysqli_error($conn));
@@ -94,8 +97,8 @@ $billNote = mysqli_fetch_assoc($noteQry)['note'] ?? '';
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: Arial, sans-serif; font-size: 12px; background: #f5f5f5; color: #000; }
-.no-print { background: #fff; padding: 8px 16px; text-align: right; border-bottom: 1px solid #ccc; position: sticky; top: 0; z-index: 99; }
-.no-print button { padding: 6px 20px; background: #1a56a0; color: #fff; border: none; border-radius: 3px; cursor: pointer; font-size: 13px; }
+.no-print { background: #fff; text-align: right; border-bottom: 1px solid #ccc; position: sticky; top: 0; z-index: 99; }
+.no-print button { padding: 6px 20px; background: #1a56a0; color: #ffd966; border: none; border-radius: 3px; cursor: pointer; font-size: 13px; }
 .page { width: 210mm; min-height: 297mm; margin: 16px auto; background: #fff; padding: 10mm 10mm 14mm; box-shadow: 0 1px 6px rgba(0,0,0,.18); position: relative; }
 .receipt-title { text-align: center; font-size: 15px; font-weight: bold; letter-spacing: 1px; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 8px; text-transform: uppercase; }
 .header-row { display: flex; justify-content: space-between; border-bottom: 1px solid #aaa; padding-bottom: 8px; margin-bottom: 8px; gap: 12px; }

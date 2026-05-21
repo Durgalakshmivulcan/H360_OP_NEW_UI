@@ -317,7 +317,7 @@ $SessionOrgId = $_SESSION['org_id'];
                             <select class="form-control form-select" id="modal_concessionName" onchange="fillConcessionDetails();">
                                 <option value="">Select Concession</option>
                                 <?php
-                                $getConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1' ORDER BY concession_name ASC");
+                                $getConcessions = mysqli_query($conn, "SELECT concession_id, concession_name, concession_type, concession_value FROM concessions WHERE status='1' AND org_id='$SessionOrgId' ORDER BY concession_name ASC");
                                 while ($resConcession = mysqli_fetch_object($getConcessions)) {
                                     echo '<option value="' . $resConcession->concession_id . '" 
                               data-type="' . $resConcession->concession_type . '" 
@@ -898,6 +898,11 @@ $('#appointmentsTable').on('click', '.lapsed-btn', function() {
       // Show the modal
       $('#paymentModal').modal('show');
   }
+
+  // Prevent scroll wheel from changing number input values
+  $(document).on('wheel', 'input[type=number]', function() {
+      $(this).blur();
+  });
 
   $('#modal_amount_method').on('change', function() {
       const val = $(this).val().toLowerCase();

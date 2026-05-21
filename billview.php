@@ -32,7 +32,10 @@ $logoSrc   = (!empty($logoFile) && file_exists($uploadDir . $logoFile))
     ? $baseUrl . '/organisation_images/' . rawurlencode($logoFile)
     : $baseUrl . '/assets/img/h360.png';
 
-$stampSrc = file_exists(__DIR__ . '/img/Stamp Logo.png') ? $baseUrl . '/img/Stamp%20Logo.png' : '';
+$stampFile = $org['org_stamp'] ?? '';
+$stampSrc  = (!empty($stampFile) && file_exists(__DIR__ . '/organisation_stamp/' . $stampFile))
+    ? $baseUrl . '/organisation_stamp/' . rawurlencode($stampFile)
+    : '';
 
 $billDate = $appt['bill_date'] ?? '';
 if (empty($billDate) || $billDate === '0000-00-00') {
