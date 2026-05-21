@@ -23,7 +23,9 @@ $sql = "SELECT
             a.end_time,
             a.check_in,
             a.check_out,
-            a.visitor_status
+            a.visitor_status,
+            a.invoice_payment,
+            a.amount_method
         FROM appointment_online AS a
         WHERE a.appoint_status='1'
           AND a.appoint_date = CURDATE()
@@ -58,6 +60,8 @@ while ($res && ($r = mysqli_fetch_assoc($res))) {
         'end_time'             => $r['end_time'],
         'status_label'         => $statusLabel,
         'status_key'           => $statusKey,
+        'payment_paid'         => ($r['invoice_payment'] === '1'),
+        'payment_method'       => $r['amount_method'] ?? '',
     ];
 }
 

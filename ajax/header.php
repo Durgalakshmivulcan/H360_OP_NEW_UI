@@ -145,7 +145,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <!-- H360 UI · Sovereign Institutional · Terminal v2 (see /design.md §3.2) -->
-    <link rel="stylesheet" href="assets/h360-ui/h360-ui.css?v=57">
+    <link rel="stylesheet" href="assets/h360-ui/h360-ui.css?v=59">
     <script src="assets/h360-ui/h360-ui.js?v=10"></script>
 </head>
 <style>

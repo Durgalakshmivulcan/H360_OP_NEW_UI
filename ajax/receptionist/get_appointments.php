@@ -88,9 +88,9 @@ if ($result) {
         $statusText = '';
         switch ($row['visitor_status']) {
             case '1': $statusText = 'Pending'; break;
-            case '2': $statusText = 'Active'; break;
-            case '0': $statusText = 'Done'; break;
-            case '3': $statusText = 'Lapsed'; break;
+            case '2': $statusText = 'Active';  break;
+            case '3': $statusText = 'Done';    break;
+            case '0': $statusText = 'Lapsed';  break;
             default:  $statusText = 'Pending';
         }
 

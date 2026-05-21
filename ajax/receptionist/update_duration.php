@@ -46,17 +46,17 @@ try {
                   LIMIT 1";
         mysqli_query($conn, $query);
 
-        // Update visitor_status to 0 (completed)
-        mysqli_query($conn, "UPDATE appointment_online 
-                             SET visitor_status = '0' 
+        // Update visitor_status to 3 (done/completed)
+        mysqli_query($conn, "UPDATE appointment_online
+                             SET visitor_status = '3'
                              WHERE appoint_register_id = '$appointmentId' AND org_id='$SessionOrgId'");
 
         echo json_encode(['status' => 'ok', 'message' => 'Visit marked as completed']);
 
     } elseif ($action === 'lapsed') {
-        // Mark appointment as no-show (lapsed)
-        mysqli_query($conn, "UPDATE appointment_online 
-                             SET visitor_status = '3' 
+        // Mark appointment as no-show / cancelled
+        mysqli_query($conn, "UPDATE appointment_online
+                             SET visitor_status = '0'
                              WHERE appoint_register_id = '$appointmentId' AND org_id='$SessionOrgId'");
 
         echo json_encode(['status' => 'ok', 'message' => 'Patient marked as lapsed']);

@@ -5103,12 +5103,13 @@ body[data-role-dashboard="doctor"] .hdoc-badge--cancelled {
 body[data-role-dashboard="doctor"] .hdoc-mini-btn {
     display: inline-flex; align-items: center; gap: 5px;
     padding: 5px 10px; border-radius: 4px;
-    background: var(--hdoc-navy-deep); color: #F7F4EE;
-    text-decoration: none; font-size: 12px; font-weight: 500;
-    transition: background .2s ease, transform .2s ease;
+    background: #C49A3F; color: #ffffff !important;
+    text-decoration: none; font-size: 12px; font-weight: 600;
+    white-space: nowrap;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
 }
 body[data-role-dashboard="doctor"] .hdoc-mini-btn:hover {
-    background: var(--hdoc-gold-deep); color: #F7F4EE; transform: translateX(2px);
+    background: #1a5276; color: #ffffff !important; transform: translateX(2px);
 }
 
 /* Lists (Recent Rx, Specialty) */

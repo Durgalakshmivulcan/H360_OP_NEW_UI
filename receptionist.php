@@ -497,7 +497,7 @@ function loadAppointments() {
         tbody += `
           <tr>
             <td class="text-center">
-              <a class="btn btn-primary btn-sm me-2 start-btn ${disabledPrescription}" 
+              <a class="btn btn-primary btn-sm me-2 start-btn ${disabledPrescription}"
                 href="${prescriptionUrl}" target="_blank">View</a>
             </td>
             <td class="text-center"><ul class="navbar-nav">${paymentHtml}</ul></td>
@@ -644,7 +644,7 @@ $('#appointmentsTable').on('click', '.done-btn', function() {
       // Disable all buttons in this row
       $row.find('.start-btn, .done-btn').prop('disabled', true).addClass('text-secondary');
       iziToast.success({title: 'Success', message: resp.message});
-    
+
     } else {
       iziToast.error({title: 'Error', message: resp.message});
     }
@@ -663,7 +663,7 @@ $('#appointmentsTable').on('click', '.lapsed-btn', function() {
       // Disable Lapsed button
       $row.find('.lapsed-btn').prop('disabled', true).addClass('text-secondary');
       iziToast.success({title: 'Success', message: resp.message});
-     
+
     } else {
       iziToast.error({title: 'Error', message: resp.message});
     }

@@ -259,12 +259,14 @@ $prettyTime = function ($t) {
             </header>
             <div class="hdoc-card__body">
                 <div class="hdoc-skeleton" id="hdocQueueSkel"><span></span><span></span><span></span></div>
-                <table class="hdoc-table" id="hdocQueueTbl" hidden>
+                <div style="overflow-x:auto;">
+                <table class="hdoc-table" id="hdocQueueTbl" hidden style="min-width:600px;">
                     <thead>
-                        <tr><th>#</th><th>Time</th><th>Patient</th><th>Age</th><th>Status</th><th class="ta-r">Action</th></tr>
+                        <tr><th>#</th><th>Time</th><th>Patient</th><th>Age</th><th>Status</th><th>Payment</th><th class="ta-r" style="white-space:nowrap;">Action</th></tr>
                     </thead>
                     <tbody></tbody>
                 </table>
+                </div>
                 <div class="hdoc-empty-state" id="hdocQueueEmpty" hidden>
                     <i class="fas fa-coffee"></i>
                     <p>No patients booked for today.</p>
@@ -384,7 +386,10 @@ $prettyTime = function ($t) {
                 '<td>' + esc(r.patient_name) + '<span class="hdoc-row__sub">' + esc(r.appoint_register_id) + '</span></td>' +
                 '<td>' + esc(r.age) + '</td>' +
                 '<td><span class="hdoc-badge hdoc-badge--' + esc(r.status_key) + '">' + esc(r.status_label) + '</span></td>' +
-                '<td class="ta-r"><a class="hdoc-mini-btn" href="' + esc(rxHref) + '"><i class="fas fa-pen"></i> Write Rx</a></td>' +
+                '<td>' + (r.payment_paid
+                    ? '<span class="hdoc-badge hdoc-badge--done">Paid</span>' + (r.payment_method ? '<span class="hdoc-row__sub">' + esc(r.payment_method) + '</span>' : '')
+                    : '<span class="hdoc-badge hdoc-badge--waiting">Pending</span>') + '</td>' +
+                '<td class="ta-r" style="white-space:nowrap;"><a class="hdoc-mini-btn" href="' + esc(rxHref) + '"><i class="fas fa-pen"></i> Write Rx</a></td>' +
                 '</tr>';
         }).join('');
         tbl.hidden = false;

@@ -228,9 +228,6 @@ if ($action === '2') {
         </div>
     </div>
 
-<div id="modalContainer"></div>
-
-
 <?php } ?>
 
 <script>
@@ -250,11 +247,12 @@ $(document).on("click", ".viewTestBilling", function() {
                 org_id: org_id
          }, 
         success: function(response) {
-            // console.log(response);
-            $("#modalContainer").html(response);
-
+            // Remove any previous instance so IDs don't collide.
+            $("#reportModal").remove();
+            // Append directly to <body> so Bootstrap's position:fixed resolves
+            // to the viewport, not the nested AJAX content area.
+            $("body").append(response);
             $("#reportModal").modal("show");
-
             $("#reportModal").on("hidden.bs.modal", function () {
                 $(this).remove();
             });
