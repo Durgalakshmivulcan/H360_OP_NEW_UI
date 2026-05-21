@@ -119,7 +119,7 @@ $saSeed = [
   <!-- ============================================================
        Feed + Heatmap row
        ============================================================ -->
-  <section class="sa-row" aria-label="Activity and utilization">
+  <section class="sa-row" aria-label="Activity and utilization" style="grid-template-columns: 1.4fr 1fr;">
 
     <div class="sa-card" id="sa-feed-card">
       <div class="sa-card-head">
@@ -212,6 +212,57 @@ $saSeed = [
             <span class="sa-ab-title">Org Reports</span>
           </a>
         </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
+       Upcoming Birthdays + Upcoming Revisits
+       ============================================================ -->
+  <section class="sa-row" aria-label="Upcoming birthdays and revisits" style="grid-template-columns: 1fr 1fr;">
+
+    <div class="sa-card" id="sa-birthday-card">
+      <div class="sa-card-head">
+        <h3><i class="fa fa-birthday-cake" aria-hidden="true"></i>&nbsp; Upcoming Birthdays</h3>
+        <span class="sa-tag" id="sa-birthday-count">loading…</span>
+      </div>
+      <div class="sa-card-body" style="padding:0; overflow:auto; max-height:280px;">
+        <table class="sa-gov-tbl" id="sa-birthday-tbl">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Mobile</th>
+              <th>Birthday</th>
+              <th>Age</th>
+            </tr>
+          </thead>
+          <tbody id="sa-birthday-body">
+            <tr><td colspan="4" class="sa-empty">loading birthdays…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sa-card" id="sa-revisit-card">
+      <div class="sa-card-head">
+        <h3><i class="fa fa-calendar-check" aria-hidden="true"></i>&nbsp; Upcoming Revisits</h3>
+        <span class="sa-tag" id="sa-revisit-count">loading…</span>
+      </div>
+      <div class="sa-card-body" style="padding:0; overflow:auto; max-height:280px;">
+        <table class="sa-gov-tbl" id="sa-revisit-tbl">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Mobile</th>
+              <th>Doctor</th>
+              <th>Revisit Date</th>
+            </tr>
+          </thead>
+          <tbody id="sa-revisit-body">
+            <tr><td colspan="4" class="sa-empty">loading revisits…</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
@@ -529,6 +580,70 @@ $saSeed = [
     });
   }
 
+  /* ---------- Birthday + Revisit lists ---------- */
+  var _saBirthdayPopupShown = false;
+  function renderSaBirthdayRows(items) {
+    var countEl = document.getElementById('sa-birthday-count');
+    if (countEl) countEl.textContent = (items.length || 0) + ' patients';
+    var tb = document.getElementById('sa-birthday-body');
+    if (!tb) return;
+    if (!items.length) {
+      tb.innerHTML = '<tr><td colspan="4" class="sa-empty">No upcoming birthdays found.</td></tr>';
+      return;
+    }
+    tb.innerHTML = items.map(function (r) {
+      return '<tr>'
+        + '<td><strong>' + esc(r.patient_name) + '</strong><br><small>' + esc(r.patient_id) + '</small></td>'
+        + '<td>' + esc(r.mobile_number) + '</td>'
+        + '<td><span class="sa-ent-tag">' + esc(r.days_label) + '</span><br><small>' + esc(r.next_birthday_display) + '</small></td>'
+        + '<td>' + esc(r.turning_age) + '</td>'
+        + '</tr>';
+    }).join('');
+  }
+  function renderSaRevisitRows(items) {
+    var countEl = document.getElementById('sa-revisit-count');
+    if (countEl) countEl.textContent = (items.length || 0) + ' patients';
+    var tb = document.getElementById('sa-revisit-body');
+    if (!tb) return;
+    if (!items.length) {
+      tb.innerHTML = '<tr><td colspan="4" class="sa-empty">No upcoming revisits found.</td></tr>';
+      return;
+    }
+    tb.innerHTML = items.map(function (r) {
+      return '<tr>'
+        + '<td><strong>' + esc(r.patient_name) + '</strong><br><small>' + esc(r.patient_id) + '</small></td>'
+        + '<td>' + esc(r.mobile_number) + '</td>'
+        + '<td>' + esc(r.doctor_name) + '</td>'
+        + '<td><span class="sa-ent-tag">' + esc(r.days_label) + '</span><br><small>' + esc(r.revisit_date_display) + '</small></td>'
+        + '</tr>';
+    }).join('');
+  }
+  function loadSaDashboardLists() {
+    return fetchJSON('ajax/dashbord/get_dashboard_lists.php').then(function (d) {
+      renderSaBirthdayRows(d.birthdays || []);
+      renderSaRevisitRows(d.revisits || []);
+      if (!_saBirthdayPopupShown && d.today_birthdays && d.today_birthdays.length) {
+        _saBirthdayPopupShown = true;
+        var el = document.createElement('div');
+        var rows = d.today_birthdays.map(function (r) {
+          return '<tr><td>' + esc(r.patient_name) + '</td><td>' + esc(r.mobile_number) + '</td><td>' + esc(r.turning_age) + '</td></tr>';
+        }).join('');
+        el.innerHTML = '<div style="text-align:left"><p class="mb-2"><strong>Today\'s birthday patients</strong></p>'
+          + '<table class="table table-sm mb-0"><thead><tr><th>Patient</th><th>Mobile</th><th>Age</th></tr></thead>'
+          + '<tbody>' + rows + '</tbody></table></div>';
+        if (window.swal) {
+          swal({ title: 'Birthday Wishes Reminder', content: el, icon: 'info' });
+        }
+      }
+    }).catch(function (e) {
+      console.warn('[sa] dashboard lists failed', e);
+      var tb1 = document.getElementById('sa-birthday-body');
+      var tb2 = document.getElementById('sa-revisit-body');
+      if (tb1) tb1.innerHTML = '<tr><td colspan="4" class="sa-empty">Unable to load.</td></tr>';
+      if (tb2) tb2.innerHTML = '<tr><td colspan="4" class="sa-empty">Unable to load.</td></tr>';
+    });
+  }
+
   /* ---------- DB health modal ---------- */
   function openDbHealth() {
     var modal = document.getElementById('sa-dbh-modal');
@@ -581,13 +696,14 @@ $saSeed = [
   /* ---------- boot ---------- */
   function boot() {
     bootCounters();
-    Promise.all([refreshKpis(), refreshFeed(), refreshHeatmap(), refreshGovernance()]);
+    Promise.all([refreshKpis(), refreshFeed(), refreshHeatmap(), refreshGovernance(), loadSaDashboardLists()]);
 
     // 30s polling for feed + governance; 60s for kpis + heatmap
     setInterval(refreshFeed, 30000);
     setInterval(refreshGovernance, 30000);
     setInterval(refreshKpis, 60000);
     setInterval(refreshHeatmap, 120000);
+    setInterval(loadSaDashboardLists, 120000);
 
     tickClock();
     setInterval(tickClock, 30000);
@@ -599,6 +715,7 @@ $saSeed = [
     refreshFeed: refreshFeed,
     refreshHeatmap: refreshHeatmap,
     openDbHealth: openDbHealth,
+    loadDashboardLists: loadSaDashboardLists,
     _dbHealth: null,
     _users: null,
   };

@@ -10,13 +10,16 @@ $securityId = !empty($_GET['security_id']) ? (int) $_GET['security_id'] : (int) 
 
 $orgFilter = "";
 $gOrgFilter = "";
+$birthdayOrgFilter = ""; // org-only — no doctor scope so all org patients' birthdays appear
 
 if (!empty($sessionOrgId)) {
-    $orgFilter = " AND ao.org_id = '" . mysqli_real_escape_string($conn, (string) $sessionOrgId) . "'";
-    $gOrgFilter = " AND gp.org_id = '" . mysqli_real_escape_string($conn, (string) $sessionOrgId) . "'";
+    $esc_org = mysqli_real_escape_string($conn, (string) $sessionOrgId);
+    $orgFilter        = " AND ao.org_id = '$esc_org'";
+    $gOrgFilter       = " AND gp.org_id = '$esc_org'";
+    $birthdayOrgFilter = " AND ao.org_id = '$esc_org'";
 }
-// FIX_B_1903: doctor-scope filter (appended into existing $orgFilter / $gOrgFilter strings so all SQL gets it)
-$orgFilter  .= currentDoctorScopeSql('ao.doctor_name');
+// Doctor scope on revisits only — birthday wishes are org-wide, not per-doctor
+$orgFilter .= currentDoctorScopeSql('ao.doctor_name');
 // gp.doctor_name on gynaec_prescriptions is a *string* (doctor full name), not doc_id, so we cannot
 // safely use the helper there without a join refactor; the prescripition arm above + the dashboard
 // per-doctor security_id filter at the metrics layer keep gynaec scoping consistent.
@@ -40,7 +43,7 @@ $birthdaySql = "
           AND ao.dob IS NOT NULL
           AND ao.dob <> ''
           AND ao.dob <> '0000-00-00'
-          $orgFilter
+          $birthdayOrgFilter
         GROUP BY ao.org_id, ao.appoint_unicode
     ) latest ON latest.latest_id = ao.appoint_id
     WHERE ao.appoint_status = '1'

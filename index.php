@@ -13,6 +13,7 @@ if (isset($_POST['log'])) {
         $_SESSION['security_id'] = $result->security_id;
         $_SESSION['role_id'] = $result->role_id;
         $_SESSION['org_id'] = $result->org_id;
+        $_SESSION['security_type'] = $result->security_type;
 
         if($_SESSION['role_id'] == "1" && $_SESSION['org_id']=="0"){
             $message = "Login Successfully";

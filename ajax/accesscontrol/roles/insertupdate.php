@@ -48,12 +48,12 @@ if ($role_name != '' && is_array($menus_ids) && count($menus_ids) > 0) {
             audit_log($conn, "Roles", "update", "roles", $role_id, $before, $after);
         }
     } else {
-        $getrole = mysqli_query($conn, "SELECT role_name FROM roles WHERE status='1' AND role_name LIKE '$role_name'") or die(mysqli_error($conn));
+        $getrole = mysqli_query($conn, "SELECT role_name FROM roles WHERE status='1' AND role_name LIKE '$role_name' AND org_id='$SessionOrgId'") or die(mysqli_error($conn));
         $result = mysqli_num_rows($getrole);
-        if ($result > 0) {     
-            $msg = 3; 
-        } else {   
-            $insertRole = mysqli_query($conn, "INSERT INTO roles (role_name, created_by, modified_by, created_date_time, status, org_id) VALUES ('$role_name', '$SessionUserId', '$SessionUserId', '$datetime', '1', '$SessionOrgId')") or die(mysqli_error($conn));
+        if ($result > 0) {
+            $msg = 3;
+        } else {
+            $insertRole = mysqli_query($conn, "INSERT INTO roles (role_name, created_by, modified_by, created_date_time, status, org_id) VALUES ('$role_name', '$SessionUserId', '$SessionUserId', NOW(), '1', '$SessionOrgId')") or die(mysqli_error($conn));
             $role_id = mysqli_insert_id($conn);
             $msg = 1;
             $afterQuery = mysqli_query($conn, "SELECT * FROM roles WHERE role_id='$role_id' LIMIT 1");

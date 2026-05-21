@@ -804,6 +804,11 @@ $(document).on('click', '.remove-btn', function () {
     $(this).closest('.main-form').remove();
 });
 
+// Prevent mouse scroll wheel from changing number input values
+$(document).on('wheel', 'input[type=number]', function () {
+    $(this).blur();
+});
+
 $(document).on('click', '.adding-form1', function () {
     $('.paste-new-forms').append(' <input type="hidden" name="medicine_id[]" id="medicine_id'+i+'" value="" >\
         <div class="row main-form" style="margin-top:-12px;">\

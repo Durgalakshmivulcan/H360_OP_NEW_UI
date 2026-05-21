@@ -5001,20 +5001,30 @@ body[data-role-dashboard="doctor"] .hdoc-grid {
     display: grid;
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     grid-template-areas:
-        "queue rx"
-        "trend spec";
+        "queue  rx"
+        "lists  lists"
+        "trend  spec";
     gap: 14px;
 }
 @media (max-width: 1100px) {
     body[data-role-dashboard="doctor"] .hdoc-grid {
         grid-template-columns: 1fr;
-        grid-template-areas: "queue" "rx" "spec" "trend";
+        grid-template-areas: "queue" "rx" "lists" "spec" "trend";
     }
 }
 body[data-role-dashboard="doctor"] .hdoc-card--queue { grid-area: queue; }
 body[data-role-dashboard="doctor"] .hdoc-card--rx    { grid-area: rx; }
 body[data-role-dashboard="doctor"] .hdoc-card--spec  { grid-area: spec; }
 body[data-role-dashboard="doctor"] .hdoc-card--trend { grid-area: trend; }
+body[data-role-dashboard="doctor"] .hdoc-lists-row   {
+    grid-area: lists;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+@media (max-width: 768px) {
+    body[data-role-dashboard="doctor"] .hdoc-lists-row { grid-template-columns: 1fr; }
+}
 
 body[data-role-dashboard="doctor"] .hdoc-card {
     background: var(--hdoc-pane); border: 1px solid var(--hdoc-edge);
@@ -5684,7 +5694,9 @@ body[data-role-dashboard="sa"] .sa-row {
   gap: 14px;
   margin-bottom: 18px;
 }
-body[data-role-dashboard="sa"] .sa-row { grid-template-columns: 1fr; }
+@media (max-width: 768px) {
+  body[data-role-dashboard="sa"] .sa-row { grid-template-columns: 1fr; }
+}
 body[data-role-dashboard="sa"] .sa-card {
   background: var(--paper);
   border: 1px solid var(--line);

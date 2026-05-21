@@ -306,6 +306,45 @@ $prettyTime = function ($t) {
             </div>
         </article>
 
+        <!-- Upcoming Birthdays + Upcoming Revisits (spans both columns) -->
+        <div class="hdoc-lists-row">
+
+            <article class="hdoc-card" id="docBirthdayCard">
+                <header class="hdoc-card__head">
+                    <h3><i class="fas fa-birthday-cake"></i>&nbsp; Upcoming Birthdays</h3>
+                    <span class="hdoc-mono hdoc-faint" id="docBirthdayCount">…</span>
+                </header>
+                <div class="hdoc-card__body" style="padding:0; overflow:auto; max-height:280px;">
+                    <table class="hdoc-table" id="docBirthdayTbl">
+                        <thead>
+                            <tr><th>Patient</th><th>Mobile</th><th>Birthday</th><th>Age</th></tr>
+                        </thead>
+                        <tbody id="docBirthdayBody">
+                            <tr><td colspan="4"><div class="hdoc-skeleton"><span></span><span></span><span></span></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="hdoc-card" id="docRevisitCard">
+                <header class="hdoc-card__head">
+                    <h3><i class="fas fa-calendar-check"></i>&nbsp; Upcoming Revisits</h3>
+                    <span class="hdoc-mono hdoc-faint" id="docRevisitCount">…</span>
+                </header>
+                <div class="hdoc-card__body" style="padding:0; overflow:auto; max-height:280px;">
+                    <table class="hdoc-table" id="docRevisitTbl">
+                        <thead>
+                            <tr><th>Patient</th><th>Mobile</th><th>Doctor</th><th>Revisit Date</th></tr>
+                        </thead>
+                        <tbody id="docRevisitBody">
+                            <tr><td colspan="4"><div class="hdoc-skeleton"><span></span><span></span><span></span></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+        </div>
+
         <!-- Weekly trend chart -->
         <article class="hdoc-card hdoc-card--trend" id="hdocTrendCard">
             <header class="hdoc-card__head">
@@ -317,6 +356,7 @@ $prettyTime = function ($t) {
             </div>
         </article>
     </div>
+
 </section>
 
 <script>
@@ -485,6 +525,12 @@ $prettyTime = function ($t) {
         if (tries > 60) return; // ~6s
         setTimeout(function () { whenApex(cb, tries + 1); }, 100);
     }
+    function whenSwal(cb, tries) {
+        tries = tries || 0;
+        if (window.swal) return cb();
+        if (tries > 100) return; // ~5s
+        setTimeout(function () { whenSwal(cb, tries + 1); }, 50);
+    }
 
     fetchJSON('ajax/dashbord/doctor_weekly_trend.php').then(function (data) {
         if (!data.success) return;
@@ -553,11 +599,74 @@ $prettyTime = function ($t) {
         if (pulseEl) {
             setInterval(function () {
                 pulseEl.classList.remove('hdoc-pulse');
-                // reflow to restart animation
                 void pulseEl.offsetWidth;
                 pulseEl.classList.add('hdoc-pulse');
             }, 4000);
         }
     }
+
+    // ---- 8. Upcoming Birthdays + Revisits ---------------------------------
+    var _docBirthdayPopupShown = false;
+
+    function loadDocDashboardLists() {
+        fetchJSON('ajax/dashbord/get_dashboard_lists.php').then(function (d) {
+            var birthdays = d.birthdays || [];
+            var revisits  = d.revisits  || [];
+
+            var bcnt = document.getElementById('docBirthdayCount');
+            if (bcnt) bcnt.textContent = birthdays.length + ' patients';
+            var bb = document.getElementById('docBirthdayBody');
+            if (bb) {
+                bb.innerHTML = birthdays.length ? birthdays.map(function (r) {
+                    var pillCls = r.days_label === 'Today' ? 'hdoc-badge hdoc-badge--done'
+                                : r.days_label === 'Tomorrow' ? 'hdoc-pill hdoc-pill--gold'
+                                : 'hdoc-pill';
+                    return '<tr>'
+                        + '<td>' + esc(r.patient_name) + '<span class="hdoc-row__sub">' + esc(r.patient_id) + '</span></td>'
+                        + '<td>' + esc(r.mobile_number) + '</td>'
+                        + '<td><span class="' + pillCls + '">' + esc(r.days_label) + '</span><span class="hdoc-row__sub">' + esc(r.next_birthday_display) + '</span></td>'
+                        + '<td>' + esc(r.turning_age) + '</td>'
+                        + '</tr>';
+                }).join('') : '<tr><td colspan="4" class="hdoc-empty-state" style="padding:20px;">No upcoming birthdays found.</td></tr>';
+            }
+
+            var rcnt = document.getElementById('docRevisitCount');
+            if (rcnt) rcnt.textContent = revisits.length + ' patients';
+            var rb = document.getElementById('docRevisitBody');
+            if (rb) {
+                rb.innerHTML = revisits.length ? revisits.map(function (r) {
+                    return '<tr>'
+                        + '<td>' + esc(r.patient_name) + '<span class="hdoc-row__sub">' + esc(r.patient_id) + '</span></td>'
+                        + '<td>' + esc(r.mobile_number) + '</td>'
+                        + '<td>' + esc(r.doctor_name) + '</td>'
+                        + '<td><span class="hdoc-pill">' + esc(r.days_label) + '</span><span class="hdoc-row__sub">' + esc(r.revisit_date_display) + '</span></td>'
+                        + '</tr>';
+                }).join('') : '<tr><td colspan="4" class="hdoc-empty-state" style="padding:20px;">No upcoming revisits found.</td></tr>';
+            }
+
+            // Today's birthday popup — show once per page load
+            if (!_docBirthdayPopupShown && d.today_birthdays && d.today_birthdays.length) {
+                _docBirthdayPopupShown = true;
+                var popupEl = document.createElement('div');
+                var rows = d.today_birthdays.map(function (r) {
+                    return '<tr><td>' + esc(r.patient_name) + '</td><td>' + esc(r.mobile_number) + '</td><td>' + esc(r.turning_age) + '</td></tr>';
+                }).join('');
+                popupEl.innerHTML = '<div style="text-align:left">'
+                    + '<p style="margin-bottom:8px;"><strong>Today\'s birthday patients</strong></p>'
+                    + '<table class="table table-sm mb-0"><thead><tr><th>Patient</th><th>Mobile</th><th>Age</th></tr></thead>'
+                    + '<tbody>' + rows + '</tbody></table></div>';
+                whenSwal(function () {
+                    swal({ title: 'Birthday Wishes Reminder 🎂', content: popupEl, icon: 'info' });
+                });
+            }
+        }).catch(function () {
+            var bb = document.getElementById('docBirthdayBody');
+            var rb = document.getElementById('docRevisitBody');
+            if (bb) bb.innerHTML = '<tr><td colspan="4" class="hdoc-empty-state" style="padding:20px;">Unable to load.</td></tr>';
+            if (rb) rb.innerHTML = '<tr><td colspan="4" class="hdoc-empty-state" style="padding:20px;">Unable to load.</td></tr>';
+        });
+    }
+    loadDocDashboardLists();
+    setInterval(loadDocDashboardLists, 120000);
 })();
 </script>

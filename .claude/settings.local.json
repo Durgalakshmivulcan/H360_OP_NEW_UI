@@ -7,7 +7,29 @@
       "PowerShell(Get-Content *)",
       "Bash(Get-Content *)",
       "PowerShell(Get-ChildItem -Path \"C:\\\\xampp\\\\htdocs\\\\H360-OP-new-UI-h360_op\" -Recurse -Directory | Select-Object -First 30 | ForEach-Object { $_.FullName })",
-      "Bash(python *)"
+      "Bash(python *)",
+      "Bash(xargs grep -l \"security_type.*SA\\\\|SA.*security_type\")",
+      "Bash(xargs grep -l '$_SESSION')",
+      "Bash(xargs grep -l \"SA\\\\|super_admin\\\\|superadmin\")",
+      "Bash(xargs grep -l \"security_type.*SA\")",
+      "Bash(xargs grep -l \"session_start\\\\|SESSION\\\\[\")",
+      "Bash(xargs grep -l \"login\\\\|Login\")",
+      "Bash(grep -n 'requireCan\\\\|userCan\\\\|function requireCan\\\\|function userCan\\\\|$datetime' C:/xampp/htdocs/H360-OP-new-UI-h360_op/config/functions.php)",
+      "Bash(grep *)",
+      "Bash(\"C:/xampp/mysql/bin/mysql.exe\" -u root -e \"DESCRIBE h360_op.security;\")",
+      "Bash(\"C:/xampp/mysql/bin/mysql.exe\" -u root -e \"SHOW DATABASES;\")",
+      "Bash(C:/xampp/mysql/bin/mysql.exe *)",
+      "Bash(Select-String -Pattern \"2026|dashboard|sa\\\\.php|restricted_to\")",
+      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"SHOW COLUMNS FROM h360_op.role_menus; SHOW COLUMNS FROM h360_op.menus LIKE '%specialization%';\")",
+      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"SHOW COLUMNS FROM h360_op.security LIKE 'can_switch_doctor';\")",
+      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"SHOW TABLES LIKE 'audit_log';\" h360_op; & \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"SELECT COUNT\\(*\\) FROM h360_op.appointment_online WHERE dob IS NOT NULL AND dob <> '' AND dob <> '0000-00-00' LIMIT 1;\")",
+      "PowerShell(& \"C:\\\\xampp\\\\php\\\\php.exe\" -l \"C:\\\\xampp\\\\htdocs\\\\H360-OP-new-UI-h360_op\\\\dashboard_partials\\\\sa.php\")",
+      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root h360_op -e \"SELECT ao.patient_name, ao.dob, CASE WHEN DATE_FORMAT\\(ao.dob,'%m-%d'\\) >= DATE_FORMAT\\(CURDATE\\(\\),'%m-%d'\\) THEN STR_TO_DATE\\(CONCAT\\(YEAR\\(CURDATE\\(\\)\\),'-',DATE_FORMAT\\(ao.dob,'%m-%d'\\)\\),'%Y-%m-%d'\\) ELSE STR_TO_DATE\\(CONCAT\\(YEAR\\(CURDATE\\(\\)\\)+1,'-',DATE_FORMAT\\(ao.dob,'%m-%d'\\)\\),'%Y-%m-%d'\\) END AS next_birthday FROM appointment_online ao WHERE ao.appoint_status='1' AND ao.dob IS NOT NULL AND ao.dob<>'' AND ao.dob<>'0000-00-00' LIMIT 5;\")",
+      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root h360_op -e \"SELECT patient_name, dob, mobile_number FROM appointment_online WHERE DATE_FORMAT\\(dob,'%m-%d'\\) = DATE_FORMAT\\(CURDATE\\(\\),'%m-%d'\\) AND appoint_status='1' AND dob IS NOT NULL AND dob <> '' AND dob <> '0000-00-00' LIMIT 5;\")",
+      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root h360_op -e \"SELECT patient_name, dob, mobile_number, org_id FROM appointment_online WHERE DATE_FORMAT\\(dob,'%m-%d'\\) = '05-21' AND appoint_status='1' LIMIT 5;\")",
+      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root h360_op -e \"SELECT s.security_id, s.admin_name, s.role_id, s.org_id FROM security s JOIN roles r ON r.role_id=s.role_id WHERE s.status='1' AND s.role_id=2 LIMIT 5;\")",
+      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root h360_op -e \"SELECT patient_name, dob, org_id FROM appointment_online WHERE DATE_FORMAT\\(dob,'%m-%d'\\) = '05-21' AND appoint_status='1' AND org_id IN \\(1,2,3\\);\")",
+      "PowerShell(& \"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root h360_op -e \"SELECT d.doc_id, d.doctor_name, d.org_id, s.security_id FROM doctors d JOIN security s ON s.security_id=d.security_id WHERE d.status='1' ORDER BY d.org_id;\")"
     ]
   }
 }

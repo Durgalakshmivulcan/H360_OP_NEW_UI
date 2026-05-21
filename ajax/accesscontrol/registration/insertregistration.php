@@ -156,7 +156,7 @@ $msg    = 0;
                                             }
 
                                             if($SessionUserId == "1"){
-                                            $Insertregis = mysqli_query($conn, "INSERT INTO security (security_id, admin_name, email, contact, security_password, role_id, can_switch_doctor, security_type, org_id, created_by, modified_by, status, create_date_time) VALUES ('$security_id','$admin_name','$email','$contact','$security_password','$role_id','$canSwitchDoctor','$securityType','$org_id','$SessionUserId','$SessionUserId','1','$datetime')") or die(mysqli_error($conn));
+                                            $Insertregis = mysqli_query($conn, "INSERT INTO security (security_id, admin_name, email, contact, security_password, role_id, can_switch_doctor, security_type, org_id, created_by, modified_by, status) VALUES ('$security_id','$admin_name','$email','$contact','$security_password','$role_id','$canSwitchDoctor','$securityType','$org_id','$SessionUserId','$SessionUserId','1')") or die(mysqli_error($conn));
 
                                             if ($Insertregis) {
                                                 $msg = 1;
@@ -170,7 +170,7 @@ $msg    = 0;
                                                 $msg = 0; 
                                             }
                                         }else{
-                                                $Insertregis = mysqli_query($conn, "INSERT INTO security (security_id, admin_name, email, contact, security_password, role_id, can_switch_doctor, security_type, org_id, created_by, modified_by, status, create_date_time) VALUES ('$security_id','$admin_name','$email','$contact','$security_password','$role_id','$canSwitchDoctor','$securityType','$SessionOrgId','$SessionUserId','$SessionUserId','1','$datetime')") or die(mysqli_error($conn));
+                                                $Insertregis = mysqli_query($conn, "INSERT INTO security (security_id, admin_name, email, contact, security_password, role_id, can_switch_doctor, security_type, org_id, created_by, modified_by, status) VALUES ('$security_id','$admin_name','$email','$contact','$security_password','$role_id','$canSwitchDoctor','$securityType','$SessionOrgId','$SessionUserId','$SessionUserId','1')") or die(mysqli_error($conn));
                 
                                                 if ($Insertregis) {
                                                     $msg = 1;

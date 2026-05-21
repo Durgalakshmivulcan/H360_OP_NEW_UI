@@ -194,6 +194,57 @@ if ($AD_DocFilter > 0) {
   </section>
 
   <!-- ============================================================
+       Upcoming Birthdays + Upcoming Revisits
+       ============================================================ -->
+  <section class="ad-row" aria-label="Upcoming birthdays and revisits">
+
+    <div class="ad-card" id="ad-birthday-card">
+      <div class="ad-card-head">
+        <h3><i class="fa fa-birthday-cake" aria-hidden="true"></i>&nbsp; Upcoming Birthdays</h3>
+        <span class="ad-tag" id="ad-birthday-count">loading…</span>
+      </div>
+      <div class="ad-card-body" style="padding:0; overflow:auto; max-height:280px;">
+        <table class="sa-gov-tbl" id="ad-birthday-tbl">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Mobile</th>
+              <th>Birthday</th>
+              <th>Age</th>
+            </tr>
+          </thead>
+          <tbody id="ad-birthday-body">
+            <tr><td colspan="4" class="sa-empty">loading birthdays…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="ad-card" id="ad-revisit-card">
+      <div class="ad-card-head">
+        <h3><i class="fa fa-calendar-check" aria-hidden="true"></i>&nbsp; Upcoming Revisits</h3>
+        <span class="ad-tag" id="ad-revisit-count">loading…</span>
+      </div>
+      <div class="ad-card-body" style="padding:0; overflow:auto; max-height:280px;">
+        <table class="sa-gov-tbl" id="ad-revisit-tbl">
+          <thead>
+            <tr>
+              <th>Patient</th>
+              <th>Mobile</th>
+              <th>Doctor</th>
+              <th>Revisit Date</th>
+            </tr>
+          </thead>
+          <tbody id="ad-revisit-body">
+            <tr><td colspan="4" class="sa-empty">loading revisits…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============================================================
        Finance summary — 30-day revenue trend
        ============================================================ -->
   <section class="ad-row ad-row-1" aria-label="Finance summary">
@@ -437,6 +488,70 @@ if ($AD_DocFilter > 0) {
     });
   }
 
+  /* ---------- Birthday + Revisit lists ---------- */
+  var _birthdayPopupShown = false;
+  function renderBirthdayRows(items) {
+    var countEl = document.getElementById('ad-birthday-count');
+    if (countEl) countEl.textContent = (items.length || 0) + ' patients';
+    var tb = document.getElementById('ad-birthday-body');
+    if (!tb) return;
+    if (!items.length) {
+      tb.innerHTML = '<tr><td colspan="4" class="sa-empty">No upcoming birthdays found.</td></tr>';
+      return;
+    }
+    tb.innerHTML = items.map(function (r) {
+      return '<tr>'
+        + '<td><strong>' + esc(r.patient_name) + '</strong><br><small style="color:var(--navy-400)">' + esc(r.patient_id) + '</small></td>'
+        + '<td>' + esc(r.mobile_number) + '</td>'
+        + '<td><span class="sa-ent-tag">' + esc(r.days_label) + '</span><br><small>' + esc(r.next_birthday_display) + '</small></td>'
+        + '<td>' + esc(r.turning_age) + '</td>'
+        + '</tr>';
+    }).join('');
+  }
+  function renderRevisitRows(items) {
+    var countEl = document.getElementById('ad-revisit-count');
+    if (countEl) countEl.textContent = (items.length || 0) + ' patients';
+    var tb = document.getElementById('ad-revisit-body');
+    if (!tb) return;
+    if (!items.length) {
+      tb.innerHTML = '<tr><td colspan="4" class="sa-empty">No upcoming revisits found.</td></tr>';
+      return;
+    }
+    tb.innerHTML = items.map(function (r) {
+      return '<tr>'
+        + '<td><strong>' + esc(r.patient_name) + '</strong><br><small style="color:var(--navy-400)">' + esc(r.patient_id) + '</small></td>'
+        + '<td>' + esc(r.mobile_number) + '</td>'
+        + '<td>' + esc(r.doctor_name) + '</td>'
+        + '<td><span class="sa-ent-tag">' + esc(r.days_label) + '</span><br><small>' + esc(r.revisit_date_display) + '</small></td>'
+        + '</tr>';
+    }).join('');
+  }
+  function loadDashboardLists() {
+    return fetchJSON('ajax/dashbord/get_dashboard_lists.php').then(function (d) {
+      renderBirthdayRows(d.birthdays || []);
+      renderRevisitRows(d.revisits || []);
+      if (!_birthdayPopupShown && d.today_birthdays && d.today_birthdays.length) {
+        _birthdayPopupShown = true;
+        var el = document.createElement('div');
+        var rows = d.today_birthdays.map(function (r) {
+          return '<tr><td>' + esc(r.patient_name) + '</td><td>' + esc(r.mobile_number) + '</td><td>' + esc(r.turning_age) + '</td></tr>';
+        }).join('');
+        el.innerHTML = '<div style="text-align:left"><p class="mb-2"><strong>Today\'s birthday patients</strong></p>'
+          + '<table class="table table-sm mb-0"><thead><tr><th>Patient</th><th>Mobile</th><th>Age</th></tr></thead>'
+          + '<tbody>' + rows + '</tbody></table></div>';
+        if (window.swal) {
+          swal({ title: 'Birthday Wishes Reminder 🎂', content: el, icon: 'info' });
+        }
+      }
+    }).catch(function (e) {
+      console.warn('[admin] dashboard lists failed', e);
+      var tb1 = document.getElementById('ad-birthday-body');
+      var tb2 = document.getElementById('ad-revisit-body');
+      if (tb1) tb1.innerHTML = '<tr><td colspan="4" class="sa-empty">Unable to load.</td></tr>';
+      if (tb2) tb2.innerHTML = '<tr><td colspan="4" class="sa-empty">Unable to load.</td></tr>';
+    });
+  }
+
   /* ---------- Finance chart ---------- */
   var apexChart = null;
   function renderFinance(data) {
@@ -526,7 +641,7 @@ if ($AD_DocFilter > 0) {
   /* ---------- boot ---------- */
   function boot() {
     bootCounters();
-    Promise.all([refreshKpis(), refreshSchedule(), refreshActivity(), refreshFinance()])
+    Promise.all([refreshKpis(), refreshSchedule(), refreshActivity(), refreshFinance(), loadDashboardLists()])
       .then(setRefreshStamp);
     tickClock();
     setInterval(tickClock, 30000);
@@ -536,6 +651,7 @@ if ($AD_DocFilter > 0) {
     setInterval(whenVisible(function () { refreshActivity().then(setRefreshStamp); }), 60000);
     setInterval(whenVisible(function () { refreshSchedule().then(setRefreshStamp); }), 120000);
     setInterval(whenVisible(function () { refreshFinance().then(setRefreshStamp); }), 180000);
+    setInterval(whenVisible(function () { loadDashboardLists().then(setRefreshStamp); }), 120000);
   }
 
   if (document.readyState === 'loading') {
@@ -548,7 +664,8 @@ if ($AD_DocFilter > 0) {
     refreshKpis: refreshKpis,
     refreshSchedule: refreshSchedule,
     refreshActivity: refreshActivity,
-    refreshFinance: refreshFinance
+    refreshFinance: refreshFinance,
+    loadDashboardLists: loadDashboardLists
   };
 })();
 </script>
