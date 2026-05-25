@@ -20,33 +20,40 @@ if ($checkDoctor && mysqli_num_rows($checkDoctor) > 0) {
     $securityType = $row['security_type'] ?? '';
 }
 
+$esc_org = mysqli_real_escape_string($conn, $SessionOrgId);
+
 // --- Build query based on role ---
-if ($securityType === 'A') {
-    // Super Admin: all doctors
-    $sql = "SELECT doc_id, doctor_name 
-            FROM doctors 
-            WHERE status='1' 
+if ($securityType === 'SA') {
+    // Super Admin: all doctors across all orgs
+    $sql = "SELECT doc_id, doctor_name
+            FROM doctors
+            WHERE status='1'
+            ORDER BY doctor_name ASC";
+} elseif ($securityType === 'A') {
+    // Admin: only their org's doctors
+    $sql = "SELECT doc_id, doctor_name
+            FROM doctors
+            WHERE status='1'
+              AND org_id = '$esc_org'
             ORDER BY doctor_name ASC";
 } elseif ($securityType === 'U') {
-    // Receptionist: only own + assigned doctors
+    // Doctor / Receptionist: only own + assigned doctors within their org
     $sql = "SELECT d.doc_id, d.doctor_name
             FROM doctors d
             WHERE d.status='1'
+              AND d.org_id = '$esc_org'
               AND (
                   d.security_id = '$SessionUserId'
                   OR d.doc_id IN (
-                      SELECT r.doc_id 
-                      FROM receptionnist r 
+                      SELECT r.doc_id
+                      FROM receptionnist r
                       WHERE r.security_id = '$SessionUserId'
                   )
               )
             ORDER BY d.doctor_name ASC";
 } else {
-    // Default: return all doctors
-    $sql = "SELECT doc_id, doctor_name 
-            FROM doctors 
-            WHERE status='1' 
-            ORDER BY doctor_name ASC";
+    echo json_encode(["doctors" => []]);
+    exit;
 }
 
 // --- Execute query ---

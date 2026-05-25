@@ -11,6 +11,10 @@
 require_once("ajax/header.php");
 // FIX_B_1840 — RBAC: per-action page guard (view).
 requireCan('view', basename(__FILE__));
+
+$nsCheckDoc = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'");
+$nsSecType  = mysqli_fetch_assoc($nsCheckDoc)['security_type'] ?? '';
+$nsEscOrg   = mysqli_real_escape_string($conn, $SessionOrgId);
 ?>
 
 <style>
@@ -62,7 +66,11 @@ requireCan('view', basename(__FILE__));
               <select id="serviceNS" name="service" class="form-select select2">
                 <option value="">All</option>
                 <?php
-                $srv = mysqli_query($conn,"SELECT service_id, service_name FROM services WHERE status='1'") or die(mysqli_error($conn));
+                if ($nsSecType === 'SA') {
+                    $srv = mysqli_query($conn, "SELECT service_id, service_name FROM services WHERE status='1' ORDER BY service_name ASC") or die(mysqli_error($conn));
+                } else {
+                    $srv = mysqli_query($conn, "SELECT DISTINCT s.service_id, s.service_name FROM services s JOIN doctors d ON FIND_IN_SET(s.service_id, d.doctor_services) > 0 WHERE s.status='1' AND d.org_id='$nsEscOrg' AND d.status='1' ORDER BY s.service_name ASC") or die(mysqli_error($conn));
+                }
                 while($s = mysqli_fetch_object($srv)) {
                   echo "<option value=\"{$s->service_id}\">{$s->service_name}</option>";
                 }
@@ -74,32 +82,32 @@ requireCan('view', basename(__FILE__));
         <select id="doctorNS" name="doctor" class="form-select select2">
           <option value="">All</option>
           <?php
-            $checkDoctor = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '$SessionUserId'");
-            $securityType = mysqli_fetch_assoc($checkDoctor)['security_type'] ?? '';
-
-            // ---- Doctors list ----
-            // SA_FATAL_FIXED_B_544: include SA so $sql is defined for super-admin
-            if ($securityType === 'A' || $securityType === 'SA') {
-                $sql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' ORDER BY doctor_name ASC";
-            } elseif ($securityType === 'U') {
-                $sql = "SELECT d.doc_id, d.doctor_name
-                        FROM doctors d
-                        WHERE d.status = '1'
-                        AND (
-                            d.security_id = '$SessionUserId'
-                            OR d.doc_id IN (
-                                SELECT r.doc_id 
-                                FROM receptionnist r 
-                                WHERE r.security_id = '$SessionUserId'
-                            )
-                        )
-                        ORDER BY d.doctor_name ASC";
+            if ($nsSecType === 'SA') {
+                $docSql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' ORDER BY doctor_name ASC";
+            } elseif ($nsSecType === 'A') {
+                $docSql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' AND org_id='$nsEscOrg' ORDER BY doctor_name ASC";
+            } elseif ($nsSecType === 'U') {
+                $docSql = "SELECT d.doc_id, d.doctor_name
+                           FROM doctors d
+                           WHERE d.status = '1'
+                           AND d.org_id = '$nsEscOrg'
+                           AND (
+                               d.security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'
+                               OR d.doc_id IN (
+                                   SELECT r.doc_id
+                                   FROM receptionnist r
+                                   WHERE r.security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'
+                               )
+                           )
+                           ORDER BY d.doctor_name ASC";
+            } else {
+                $docSql = null;
             }
-
-            $res = mysqli_query($conn, $sql) or die(json_encode(['error' => mysqli_error($conn)]));
-
-            while ($row = mysqli_fetch_assoc($res)) {
-                echo "<option value=\"{$row['doc_id']}\">{$row['doctor_name']}</option>";
+            if ($docSql) {
+                $res = mysqli_query($conn, $docSql) or die(mysqli_error($conn));
+                while ($row = mysqli_fetch_assoc($res)) {
+                    echo "<option value=\"{$row['doc_id']}\">{$row['doctor_name']}</option>";
+                }
             }
           ?>
         </select>

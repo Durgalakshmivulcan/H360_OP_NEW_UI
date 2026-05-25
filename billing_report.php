@@ -81,13 +81,10 @@ if ($SessionUserId == '1') {
           <div class="col-lg-2 col-sm-6 mb-2">
             <label>Payment Method</label>
             <select class="form-control form-select" id="br_pay_method">
-              <option value="">All Methods</option>
+                <option value="">All Methods</option>
               <option value="Cash">Cash</option>
               <option value="UPI">UPI</option>
-              <option value="Card">Card</option>
-              <option value="Cheque">Cheque</option>
-              <option value="Online">Online</option>
-              <option value="Other">Other</option>
+              <option value="Both (Cash + UPI)">Both (Cash + UPI)</option>
             </select>
           </div>
           <div class="col-lg-2 col-sm-6 mb-2">

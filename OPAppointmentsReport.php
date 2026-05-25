@@ -18,6 +18,10 @@
 require_once("./ajax/header.php");
 // FIX_B_1840 — RBAC: per-action page guard (view).
 requireCan('view', basename(__FILE__));
+
+$opCheckDoc = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'");
+$opSecType  = mysqli_fetch_assoc($opCheckDoc)['security_type'] ?? '';
+$opEscOrg   = mysqli_real_escape_string($conn, $SessionOrgId);
 ?>
 <!-- Main Content -->
 <div class="main-content">
@@ -50,33 +54,33 @@ requireCan('view', basename(__FILE__));
               <select id="doctor" name="doctor" class="form-select select2">
                 <option value="">All Doctors</option>
                 <?php
-                 $checkDoctor = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '$SessionUserId'");
-                  $securityType = mysqli_fetch_assoc($checkDoctor)['security_type'] ?? '';
-
-                  // ---- Doctors list ----
-                  // SA_FATAL_FIXED_B_542: include SA so $sql is defined for super-admin
-                  if ($securityType === 'A' || $securityType === 'SA') {
-                      $sql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' ORDER BY doctor_name ASC";
-                  } elseif ($securityType === 'U') {
-                      $sql = "SELECT d.doc_id, d.doctor_name
-                              FROM doctors d
-                              WHERE d.status = '1'
-                              AND (
-                                  d.security_id = '$SessionUserId'
-                                  OR d.doc_id IN (
-                                      SELECT r.doc_id 
-                                      FROM receptionnist r 
-                                      WHERE r.security_id = '$SessionUserId'
-                                  )
-                              )
-                              ORDER BY d.doctor_name ASC";
-                  }
-
-                  $res = mysqli_query($conn, $sql) or die(json_encode(['error' => mysqli_error($conn)]));
-
-                  while ($row = mysqli_fetch_assoc($res)) {
-                      echo "<option value=\"{$row['doc_id']}\">{$row['doctor_name']}</option>";
-                  }
+                if ($opSecType === 'SA') {
+                    $docSql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' ORDER BY doctor_name ASC";
+                } elseif ($opSecType === 'A') {
+                    $docSql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' AND org_id='$opEscOrg' ORDER BY doctor_name ASC";
+                } elseif ($opSecType === 'U') {
+                    $docSql = "SELECT d.doc_id, d.doctor_name
+                               FROM doctors d
+                               WHERE d.status = '1'
+                               AND d.org_id = '$opEscOrg'
+                               AND (
+                                   d.security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'
+                                   OR d.doc_id IN (
+                                       SELECT r.doc_id
+                                       FROM receptionnist r
+                                       WHERE r.security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'
+                                   )
+                               )
+                               ORDER BY d.doctor_name ASC";
+                } else {
+                    $docSql = null;
+                }
+                if ($docSql) {
+                    $res = mysqli_query($conn, $docSql) or die(mysqli_error($conn));
+                    while ($row = mysqli_fetch_assoc($res)) {
+                        echo "<option value=\"{$row['doc_id']}\">{$row['doctor_name']}</option>";
+                    }
+                }
                 ?>
               </select>
             </div>
@@ -86,7 +90,11 @@ requireCan('view', basename(__FILE__));
               <select id="service" name="service" class="form-select select2">
                 <option value="">All Services</option>
                 <?php
-                $serviceQry = mysqli_query($conn, "SELECT service_id, service_name FROM services WHERE status='1'") or die(mysqli_error($conn));
+                if ($opSecType === 'SA') {
+                    $serviceQry = mysqli_query($conn, "SELECT service_id, service_name FROM services WHERE status='1' ORDER BY service_name ASC") or die(mysqli_error($conn));
+                } else {
+                    $serviceQry = mysqli_query($conn, "SELECT DISTINCT s.service_id, s.service_name FROM services s JOIN doctors d ON FIND_IN_SET(s.service_id, d.doctor_services) > 0 WHERE s.status='1' AND d.org_id='$opEscOrg' AND d.status='1' ORDER BY s.service_name ASC") or die(mysqli_error($conn));
+                }
                 while($srv = mysqli_fetch_object($serviceQry)) {
                   echo "<option value=\"{$srv->service_id}\">{$srv->service_name}</option>";
                 }
@@ -106,37 +114,37 @@ requireCan('view', basename(__FILE__));
     <div class="col-lg-12" id="summaryTiles" style="display: none;">
       <div class="row">
         <div class="col-md-3 col-sm-6">
-          <div class="card card-statistic-1 bg-primary text-white">
-            <div class="card-icon"><i data-feather="calendar"></i></div>
+          <div class="card card-statistic-1">
+            <div class="card-icon bg-primary"><i data-feather="calendar"></i></div>
             <div class="card-wrap">
-              <div class="card-header"><h6>Booked</h6></div>
+              <div class="card-header"><h4>Booked</h4></div>
               <div class="card-body" id="tileBooked">0</div>
             </div>
           </div>
         </div>
         <div class="col-md-3 col-sm-6">
-          <div class="card card-statistic-1 bg-success text-white">
-            <div class="card-icon"><i data-feather="check-circle"></i></div>
+          <div class="card card-statistic-1">
+            <div class="card-icon bg-success"><i data-feather="check-circle"></i></div>
             <div class="card-wrap">
-              <div class="card-header"><h6>Completed</h6></div>
+              <div class="card-header"><h4>Completed</h4></div>
               <div class="card-body" id="tileCompleted">0</div>
             </div>
           </div>
         </div>
         <div class="col-md-3 col-sm-6">
-          <div class="card card-statistic-1 bg-danger text-white">
-            <div class="card-icon"><i data-feather="x-circle"></i></div>
+          <div class="card card-statistic-1">
+            <div class="card-icon bg-danger"><i data-feather="x-circle"></i></div>
             <div class="card-wrap">
-              <div class="card-header"><h6>Cancelled</h6></div>
+              <div class="card-header"><h4>Cancelled</h4></div>
               <div class="card-body" id="tileCancelled">0</div>
             </div>
           </div>
         </div>
         <div class="col-md-3 col-sm-6">
-          <div class="card card-statistic-1 bg-warning text-white">
-            <div class="card-icon"><i data-feather="alert-circle"></i></div>
+          <div class="card card-statistic-1">
+            <div class="card-icon bg-warning"><i data-feather="alert-circle"></i></div>
             <div class="card-wrap">
-              <div class="card-header"><h6>No‑Shows</h6></div>
+              <div class="card-header"><h4>No‑Shows</h4></div>
               <div class="card-body" id="tileNoShows">0</div>
             </div>
           </div>

@@ -6,26 +6,33 @@ $SessionRoleId = $_SESSION['role_id'] ?? '';
 $SessionOrgId = $_SESSION['org_id'] ?? '';
 
 $date = $_POST["appoint_date"];
-$security_id = $SessionUserId;
-if (!empty($_POST['security_id'])) {
-    $security_id = intval($_POST['security_id']);
-}
+$security_id = isset($_POST['security_id']) ? intval($_POST['security_id']) : (int)$SessionUserId;
 
 $adminQry = ($SessionUserId != "1") ? " AND a.org_id='$SessionOrgId'" : "";
 
 $FinalData = [];
 
-// Main query to get appointments
-$qryOnline = mysqli_query($conn, "
-    SELECT a.*
-    FROM appointment_online AS a
-    LEFT JOIN doctors AS d
-        ON a.doctor_name = d.doc_id
-    WHERE a.appoint_status = '1'
-      AND a.appoint_date = '$date'
-      AND d.security_id = '$security_id'
-      $adminQry
-") or die(mysqli_error($conn));
+// security_id=0 means "all doctors" — omit the doctor join filter
+if ($security_id === 0) {
+    $qryOnline = mysqli_query($conn, "
+        SELECT a.*
+        FROM appointment_online AS a
+        WHERE a.appoint_status = '1'
+          AND a.appoint_date = '$date'
+          $adminQry
+    ") or die(mysqli_error($conn));
+} else {
+    $qryOnline = mysqli_query($conn, "
+        SELECT a.*
+        FROM appointment_online AS a
+        LEFT JOIN doctors AS d
+            ON a.doctor_name = d.doc_id
+        WHERE a.appoint_status = '1'
+          AND a.appoint_date = '$date'
+          AND d.security_id = '$security_id'
+          $adminQry
+    ") or die(mysqli_error($conn));
+}
 
 // Fetch results
 while ($resOnline = mysqli_fetch_object($qryOnline)) {

@@ -1091,6 +1091,33 @@ function currentDoctorScopeSql($column = 'doctor_name') {
     return " AND $col='$doc' ";
 }
 
+/**
+ * Returns the first URL the current role has view-access to, so roles that
+ * cannot access dashboard.php land on their own home page after login or
+ * when redirected by a page gate. Falls back to 'dashboard.php' if nothing
+ * else is found (e.g. SA and Admin always have dashboard access).
+ *
+ * @param mysqli $conn
+ * @param int|string $roleId  session role_id
+ * @return string  relative URL, e.g. 'medicine_bill.php'
+ */
+function userDefaultHomePage($conn, $roleId) {
+    $roleId = (int)$roleId;
+    $row = mysqli_fetch_assoc(mysqli_query($conn,
+        "SELECT m.menu_web_url
+         FROM role_menus rm
+         JOIN menus m ON rm.menu_id = m.menu_id
+         WHERE rm.role_id = '$roleId'
+           AND FIND_IN_SET('view', rm.permissions) > 0
+           AND m.menu_web_url != ''
+           AND m.menu_web_url != '#'
+           AND m.status = '1'
+         ORDER BY m.menu_order
+         LIMIT 1"
+    ));
+    return ($row && !empty($row['menu_web_url'])) ? $row['menu_web_url'] : 'dashboard.php';
+}
+
 // FIX_B_2352: every existing row in `doctors` already has a "Dr." (or "Dr ")
 // prefix on doctor_name. UI sites that naively prepended "Dr. " produced
 // "Dr. Dr.Ashwin Kumar Panda". Normalise here so callers never double-prefix.

@@ -2,6 +2,10 @@
 require_once("ajax/header.php");
 // FIX_B_1840 — RBAC: per-action page guard (view).
 requireCan('view', basename(__FILE__));
+
+$pwCheckDoc = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'");
+$pwSecType  = mysqli_fetch_assoc($pwCheckDoc)['security_type'] ?? '';
+$pwEscOrg   = mysqli_real_escape_string($conn, $SessionOrgId);
 ?>
 <div class="main-content">
   <section class="section">
@@ -29,32 +33,32 @@ requireCan('view', basename(__FILE__));
                 <select id="doctorPW" name="doctor" class="form-select select2">
                   <option value="">All Doctors</option>
                   <?php
-                 $checkDoctor = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '$SessionUserId'");
-                  $securityType = mysqli_fetch_assoc($checkDoctor)['security_type'] ?? '';
-
-                  // ---- Doctors list ----
-                  // SA_FATAL_FIXED_B_540: include SA so $sql is defined for super-admin
-                  if ($securityType === 'A' || $securityType === 'SA') {
-                      $sql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' ORDER BY doctor_name ASC";
-                  } elseif ($securityType === 'U') {
-                      $sql = "SELECT d.doc_id, d.doctor_name
-                              FROM doctors d
-                              WHERE d.status = '1'
-                              AND (
-                                  d.security_id = '$SessionUserId'
-                                  OR d.doc_id IN (
-                                      SELECT r.doc_id 
-                                      FROM receptionnist r 
-                                      WHERE r.security_id = '$SessionUserId'
-                                  )
-                              )
-                              ORDER BY d.doctor_name ASC";
+                  if ($pwSecType === 'SA') {
+                      $docSql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' ORDER BY doctor_name ASC";
+                  } elseif ($pwSecType === 'A') {
+                      $docSql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' AND org_id='$pwEscOrg' ORDER BY doctor_name ASC";
+                  } elseif ($pwSecType === 'U') {
+                      $docSql = "SELECT d.doc_id, d.doctor_name
+                                 FROM doctors d
+                                 WHERE d.status = '1'
+                                 AND d.org_id = '$pwEscOrg'
+                                 AND (
+                                     d.security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'
+                                     OR d.doc_id IN (
+                                         SELECT r.doc_id
+                                         FROM receptionnist r
+                                         WHERE r.security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'
+                                     )
+                                 )
+                                 ORDER BY d.doctor_name ASC";
+                  } else {
+                      $docSql = null;
                   }
-
-                  $res = mysqli_query($conn, $sql) or die(json_encode(['error' => mysqli_error($conn)]));
-
-                  while ($row = mysqli_fetch_assoc($res)) {
-                      echo "<option value=\"{$row['doc_id']}\">{$row['doctor_name']}</option>";
+                  if ($docSql) {
+                      $res = mysqli_query($conn, $docSql) or die(mysqli_error($conn));
+                      while ($row = mysqli_fetch_assoc($res)) {
+                          echo "<option value=\"{$row['doc_id']}\">{$row['doctor_name']}</option>";
+                      }
                   }
                 ?>
                 </select>
@@ -64,7 +68,11 @@ requireCan('view', basename(__FILE__));
                 <select id="servicePW" name="service" class="form-select select2">
                   <option value="">All Services</option>
                   <?php
-                  $srvRes = mysqli_query($conn, "SELECT service_id, service_name FROM services WHERE status='1'") or die(mysqli_error($conn));
+                  if ($pwSecType === 'SA') {
+                      $srvRes = mysqli_query($conn, "SELECT service_id, service_name FROM services WHERE status='1' ORDER BY service_name ASC") or die(mysqli_error($conn));
+                  } else {
+                      $srvRes = mysqli_query($conn, "SELECT DISTINCT s.service_id, s.service_name FROM services s JOIN doctors d ON FIND_IN_SET(s.service_id, d.doctor_services) > 0 WHERE s.status='1' AND d.org_id='$pwEscOrg' AND d.status='1' ORDER BY s.service_name ASC") or die(mysqli_error($conn));
+                  }
                   while($sv = mysqli_fetch_object($srvRes)){
                     echo "<option value=\"{$sv->service_id}\">{$sv->service_name}</option>";
                   }
@@ -84,19 +92,19 @@ requireCan('view', basename(__FILE__));
       <div class="col-lg-12" id="waitSummary" style="display:none;">
         <div class="row">
           <div class="col-md-6 col-sm-6">
-            <div class="card card-statistic-1 bg-info text-white">
-              <div class="card-icon"><i data-feather="watch"></i></div>
+            <div class="card card-statistic-1">
+              <div class="card-icon bg-info"><i data-feather="watch"></i></div>
               <div class="card-wrap">
-                <div class="card-header"><h5>Average Waiting Time</h5></div>
+                <div class="card-header"><h4>Average Waiting Time</h4></div>
                 <div class="card-body" id="tileAvgWait">0 mins</div>
               </div>
             </div>
           </div>
           <div class="col-md-6 col-sm-6">
-            <div class="card card-statistic-1 bg-secondary text-white">
-              <div class="card-icon"><i data-feather="activity"></i></div>
+            <div class="card card-statistic-1">
+              <div class="card-icon bg-secondary"><i data-feather="activity"></i></div>
               <div class="card-wrap">
-                <div class="card-header"><h5>Average Visit Duration</h5></div>
+                <div class="card-header"><h4>Average Visit Duration</h4></div>
                 <div class="card-body" id="tileAvgVisit">0 mins</div>
               </div>
             </div>

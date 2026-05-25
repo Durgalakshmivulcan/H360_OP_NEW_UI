@@ -34,26 +34,33 @@ if (empty($fromDate) || empty($toDate)) {
     exit;
 }
 
-// Get security type and allowed doctors
-$checkDoctor   = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '$SessionUserId'");
-$securityType  = mysqli_fetch_assoc($checkDoctor)['security_type'] ?? '';
+$esc_org = mysqli_real_escape_string($conn, $SessionOrgId);
+$esc_uid = mysqli_real_escape_string($conn, $SessionUserId);
 
-// SA_FATAL_FIXED_B_550: include SA so $sql is defined for super-admin
-if ($securityType === 'A' || $securityType === 'SA') {
+$checkDoctor  = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '$esc_uid'");
+$securityType = mysqli_fetch_assoc($checkDoctor)['security_type'] ?? '';
+
+if ($securityType === 'SA') {
     $sql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' ORDER BY doctor_name ASC";
+} elseif ($securityType === 'A') {
+    $sql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' AND org_id='$esc_org' ORDER BY doctor_name ASC";
 } elseif ($securityType === 'U') {
     $sql = "SELECT d.doc_id, d.doctor_name
             FROM doctors d
             WHERE d.status = '1'
+            AND d.org_id = '$esc_org'
             AND (
-                d.security_id = '$SessionUserId'
+                d.security_id = '$esc_uid'
                 OR d.doc_id IN (
-                        SELECT r.doc_id 
-                        FROM receptionnist r 
-                        WHERE r.security_id = '$SessionUserId'
+                    SELECT r.doc_id
+                    FROM receptionnist r
+                    WHERE r.security_id = '$esc_uid'
                 )
             )
             ORDER BY d.doctor_name ASC";
+} else {
+    echo json_encode([]);
+    exit;
 }
 
 $res = mysqli_query($conn, $sql) or die(json_encode(['error' => mysqli_error($conn)]));
@@ -82,60 +89,58 @@ if (!empty($serviceId)) {
 $whereParts   = [];
 $whereParts[] = "a.appoint_date BETWEEN '" . mysqli_real_escape_string($conn, $fromDate) . "' AND '" . mysqli_real_escape_string($conn, $toDate) . "'";
 
+if ($securityType !== 'SA' && !empty($SessionOrgId)) {
+    $whereParts[] = "a.org_id = '$esc_org'";
+}
+
 if (!empty($doctorId)) {
-    // Explicit doctor filter
     $whereParts[] = "a.doctor_name = '" . mysqli_real_escape_string($conn, $doctorId) . "'";
 } else {
-    // Default: restrict to allowed doctors only
     $allowedDoctorIds = array_column($doctors, 'doc_id');
     if (!empty($allowedDoctorIds)) {
-        $whereParts[] = "a.doctor_name IN ('" . implode("','", $allowedDoctorIds) . "')";
+        $whereParts[] = "a.doctor_name IN (" . implode(',', array_map('intval', $allowedDoctorIds)) . ")";
     } else {
-        // No allowed doctors → no rows
-        $whereParts[] = "0";
+        echo json_encode([]);
+        exit;
     }
 }
 
 if (!empty($serviceId)) {
-    $whereParts[] = "s.service_id = '" . mysqli_real_escape_string($conn, $serviceId) . "'";
+    $whereParts[] = "FIND_IN_SET('" . mysqli_real_escape_string($conn, $serviceId) . "', d.doctor_services) > 0";
 }
 
 $whereSql = implode(' AND ', $whereParts);
 
-// Query to aggregate consultation duration by doctor and service
+// Group by doctor only; service displayed via scalar subquery to avoid row multiplication
 $sql = "SELECT
     d.doctor_name,
-    s.service_name AS service,
+    (SELECT GROUP_CONCAT(sv.service_name ORDER BY sv.service_name SEPARATOR ', ')
+     FROM services sv
+     WHERE FIND_IN_SET(sv.service_id, d.doctor_services) > 0 AND sv.status='1') AS service,
     COUNT(*) AS total_appointments,
-
-    -- Average waiting time (registration → check_in)
     AVG(
         CASE
-            WHEN a.start_time IS NOT NULL 
+            WHEN a.start_time IS NOT NULL
                  AND dpd.check_in IS NOT NULL
             THEN TIMESTAMPDIFF(MINUTE, a.start_time, dpd.check_in)
             ELSE NULL
         END
     ) AS avg_wait,
-
-    -- Average consultation duration (check_in → check_out)
     AVG(
         CASE
-            WHEN dpd.check_in IS NOT NULL 
+            WHEN dpd.check_in IS NOT NULL
                  AND dpd.check_out IS NOT NULL
             THEN TIMESTAMPDIFF(MINUTE, dpd.check_in, dpd.check_out)
             ELSE NULL
         END
     ) AS avg_duration
 FROM appointment_online a
-JOIN doctor_patient_duration dpd 
+JOIN doctor_patient_duration dpd
     ON a.appoint_register_id = dpd.appointment_id
-JOIN doctors d 
+JOIN doctors d
     ON a.doctor_name = d.doc_id
-JOIN services s 
-    ON FIND_IN_SET(s.service_id, d.doctor_services) > 0
 WHERE $whereSql
-GROUP BY d.doc_id, s.service_id";
+GROUP BY d.doc_id, d.doctor_name";
 
 $res = mysqli_query($conn, $sql);
 if (!$res) {

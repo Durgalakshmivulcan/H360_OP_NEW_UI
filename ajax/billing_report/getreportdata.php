@@ -18,7 +18,13 @@ $orgFilt    = ($SessionUserId == '1') ? (int)($_POST['org_id'] ?? 0) : (int)$Ses
 $where = "WHERE DATE(i.created_at) BETWEEN '$from' AND '$to'";
 if ($orgFilt)        $where .= " AND i.org_id='$orgFilt'";
 if ($billType)       $where .= " AND i.bill_type='$billType'";
-if ($payMethod)      $where .= " AND i.payment_method='$payMethod'";
+// "Both (Cash + UPI)" splits into two separate rows (Cash + UPI) in the invoice table;
+// match both methods so the user sees the full split pair.
+if ($payMethod === 'Both (Cash + UPI)') {
+    $where .= " AND i.payment_method IN ('Cash','UPI')";
+} elseif ($payMethod) {
+    $where .= " AND i.payment_method='$payMethod'";
+}
 if ($statusFilt !== '') $where .= " AND i.status='" . ($statusFilt === 'active' ? 1 : 0) . "'";
 if ($doctorFilt)     $where .= " AND ao.doctor_name='$doctorFilt'";
 

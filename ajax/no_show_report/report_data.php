@@ -11,26 +11,33 @@ $SessionUserId = $_SESSION['security_id'] ?? '';
 $SessionRoleId = $_SESSION['role_id'] ?? '';
 $SessionOrgId = $_SESSION['org_id'] ?? '';
 
-$checkDoctor = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '$SessionUserId'");
+$esc_org = mysqli_real_escape_string($conn, $SessionOrgId);
+$esc_uid = mysqli_real_escape_string($conn, $SessionUserId);
+
+$checkDoctor = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '$esc_uid'");
 $securityType = mysqli_fetch_assoc($checkDoctor)['security_type'] ?? '';
 
-// ---- Doctors list ----
-// SA_FATAL_FIXED_B_391: include SA so $sql is defined for super-admin (was B-391)
-if ($securityType === 'A' || $securityType === 'SA') {
+if ($securityType === 'SA') {
     $sql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' ORDER BY doctor_name ASC";
+} elseif ($securityType === 'A') {
+    $sql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' AND org_id='$esc_org' ORDER BY doctor_name ASC";
 } elseif ($securityType === 'U') {
     $sql = "SELECT d.doc_id, d.doctor_name
             FROM doctors d
             WHERE d.status = '1'
+            AND d.org_id = '$esc_org'
             AND (
-                d.security_id = '$SessionUserId'
+                d.security_id = '$esc_uid'
                 OR d.doc_id IN (
-                        SELECT r.doc_id 
-                        FROM receptionnist r 
-                        WHERE r.security_id = '$SessionUserId'
+                    SELECT r.doc_id
+                    FROM receptionnist r
+                    WHERE r.security_id = '$esc_uid'
                 )
             )
             ORDER BY d.doctor_name ASC";
+} else {
+    echo json_encode(['tableData' => [], 'chartSeries' => []]);
+    exit;
 }
 
 $res = mysqli_query($conn, $sql) or die(json_encode(['error' => mysqli_error($conn)]));
@@ -72,6 +79,10 @@ if (!empty($serviceId)) {
 // Build dynamic WHERE clause
 $whereParts = [];
 $whereParts[] = "a.appoint_date BETWEEN '" . mysqli_real_escape_string($conn, $fromDate) . "' AND '" . mysqli_real_escape_string($conn, $toDate) . "'";
+
+if ($securityType !== 'SA' && !empty($SessionOrgId)) {
+    $whereParts[] = "a.org_id = '$esc_org'";
+}
 
 if (!empty($gender)) {
     $whereParts[] = "a.gender = '" . mysqli_real_escape_string($conn, $gender) . "'";

@@ -44,6 +44,12 @@
                     header("Location: dashboard.php");
                     exit;
                 }
+            } elseif ($currentPage === 'dashboard.php') {
+                // dashboard.php cannot redirect to itself — send to role home page instead
+                if (!userCan('view', 'dashboard.php')) {
+                    header("Location: " . userDefaultHomePage($conn, $SessionRoleId));
+                    exit;
+                }
             } else {
                 $hardGatedPages = [
                     'registration.php', 'roles.php', 'AppointmentOnline.php',
@@ -292,9 +298,11 @@ td {
     <?php if ($SessionOrgId !== '0'): ?>
         <div class="quick-access">
         <ul class="menu">
+            <?php if (userCan('view', 'dashboard.php')): ?>
             <li>
             <a href="dashboard.php"><i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span></a>
             </li>
+            <?php endif; ?>
             <li>
             <a href="doctorstimeslot.php"><i class="bi bi-clock-history"></i><span>Time Slots</span></a>
             </li>
@@ -466,7 +474,7 @@ td {
             <div class="main-sidebar sidebar-style-2" tabindex="4" style="overflow: hidden; outline: none;">    
                 <aside id="sidebar-wrapper">
                     <div class="sidebar-brand">
-                        <a href="dashboard.php">
+                        <a href="<?= htmlspecialchars(userDefaultHomePage($conn, $SessionRoleId), ENT_QUOTES) ?>">
                             <input type="hidden" name="image1" id="image1" value="1">
 
                          <img id="logo1" src="<?=$logo_without_text_path?>" class="header-logo w-50 h-auto mt-4" style="visibility:hidden; position:absolute;">

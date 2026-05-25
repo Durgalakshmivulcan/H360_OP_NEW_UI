@@ -155,12 +155,12 @@ try {
             patient_name, appoint_register_id, patient_uid, age, gender, rx_id,
             test_group_id, test_id, medicine_id, prescriptiondate, patient_vitals,
             finalDiagnosis, chiefcomplaint, pasthistory, personal_note, reviewafter, reviewafterdate, images, patient_data, advise,
-            status, create_date_time, create_by, modify_by, org_id
+            status, create_date_time, create_by, modify_by, org_id, gynaec_mirror
         ) VALUES (
             '$patientName', '$appointId', '$patientId', '$age', '$gender', 0,
             0, '$invsJson', '$medsJson', NOW(), '$appointId',
             '$finalDiag', '$chiefCompl', '$gynaecHx', '$reviewNotes', '$reviewAfter', '$reviewAfterDate', '', '$patientData', '$advice',
-            '1', NOW(), '$SessionUserId', '$SessionUserId', '$orgId'
+            '1', NOW(), '$SessionUserId', '$SessionUserId', '$orgId', 1
         )";
     if (!mysqli_query($conn, $mirrorSql)) {
         throw new Exception('mirror prescripition INSERT failed: ' . mysqli_error($conn));

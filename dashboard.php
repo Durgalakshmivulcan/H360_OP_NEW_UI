@@ -170,7 +170,20 @@ while ($row = mysqli_fetch_assoc($res)) {
   ];
 }
 $total = count($admins);
-$defaultDashboardSecurityId = !empty($admins[0]['id']) ? $admins[0]['id'] : $SessionUserId;
+// Doctors default to their own security_id; receptionists/admins with
+// multiple assigned doctors default to '0' meaning "all" so the initial
+// load shows combined data across all assigned doctors.
+$isSessionUserDoctor = false;
+foreach ($admins as $a) {
+    if ((string)$a['id'] === (string)$SessionUserId) { $isSessionUserDoctor = true; break; }
+}
+if ($isSessionUserDoctor) {
+    $defaultDashboardSecurityId = $SessionUserId;
+} elseif (count($admins) > 1) {
+    $defaultDashboardSecurityId = '0';
+} else {
+    $defaultDashboardSecurityId = !empty($admins[0]['id']) ? $admins[0]['id'] : $SessionUserId;
+}
 ?>
 
 <style>
@@ -921,6 +934,7 @@ $defaultDashboardSecurityId = !empty($admins[0]['id']) ? $admins[0]['id'] : $Ses
                 <tr>
                   <th><b>Doctor ID</b></th>
                   <th><b>Doctor Name</b></th>
+                  <th><b>Department</b></th>
                   <th><b>Service</b></th>
                 </tr>
               </thead>
@@ -1058,12 +1072,13 @@ $defaultDashboardSecurityId = !empty($admins[0]['id']) ? $admins[0]['id'] : $Ses
                     <th><b>Patient</b></th>
                     <th><b>Mobile</b></th>
                     <th><b>Doctor</b></th>
+                    <th><b>Department</b></th>
                     <th><b>Revisit Date</b></th>
                   </tr>
                 </thead>
                 <tbody id="dashboardRevisitTable">
                   <tr>
-                    <td colspan="4" class="dashboard-empty-state">Loading upcoming revisits...</td>
+                    <td colspan="5" class="dashboard-empty-state">Loading upcoming revisits...</td>
                   </tr>
                 </tbody>
               </table>
@@ -1166,6 +1181,7 @@ $defaultDashboardSecurityId = !empty($admins[0]['id']) ? $admins[0]['id'] : $Ses
   var jsonMonthsYears = <?php echo $jsonShortMonths; ?>;
   var jsonCountData = <?php echo $jsonCountData; ?>;
   var defaultDashboardSecurityId = <?php echo json_encode((string) $defaultDashboardSecurityId); ?>;
+  var currentSelectedSecId = defaultDashboardSecurityId;
   var birthdayPopupShownFor = {};
 
   $("document").ready(function() {
@@ -1217,15 +1233,17 @@ $defaultDashboardSecurityId = !empty($admins[0]['id']) ? $admins[0]['id'] : $Ses
 
   function loadDashboardMetrics(secId) {
     secId = secId || defaultDashboardSecurityId;
+    currentSelectedSecId = secId;
     // Find the clicked element
     const clicked = document.querySelector(
       `[onclick="loadDashboardMetrics('${secId}')"]`
     );
 
     const display = document.getElementById('doctorDisplay');
-    const name = clicked?.dataset.name || 'Choose';
-    const specialization = clicked?.dataset.specialization || '-';
-    const avatar = clicked?.dataset.img || 'assets/img/default-doctor.png'; // fallback image
+    const isAll = (String(secId) === '0');
+    const name = isAll ? 'All Doctors' : (clicked?.dataset.name || 'Choose');
+    const specialization = isAll ? '' : (clicked?.dataset.specialization || '-');
+    const avatar = isAll ? 'assets/img/default-doctor.png' : (clicked?.dataset.img || 'assets/img/default-doctor.png');
 
     // Initial doctor info before AJAX
     display.innerHTML = `
@@ -1355,7 +1373,7 @@ $defaultDashboardSecurityId = !empty($admins[0]['id']) ? $admins[0]['id'] : $Ses
     $('#dashboardRevisitCount').text((items.length || 0) + ' patients');
 
     if (!items.length) {
-      $('#dashboardRevisitTable').html('<tr><td colspan="4" class="dashboard-empty-state">No upcoming revisits found.</td></tr>');
+      $('#dashboardRevisitTable').html('<tr><td colspan="5" class="dashboard-empty-state">No upcoming revisits found.</td></tr>');
       return;
     }
 
@@ -1365,6 +1383,7 @@ $defaultDashboardSecurityId = !empty($admins[0]['id']) ? $admins[0]['id'] : $Ses
       html += '<td><strong>' + escapeDashboardHtml(item.patient_name) + '</strong><br><small class="text-muted">' + escapeDashboardHtml(item.patient_id) + '</small></td>';
       html += '<td>' + escapeDashboardHtml(item.mobile_number) + '</td>';
       html += '<td>' + escapeDashboardHtml(item.doctor_name) + '</td>';
+      html += '<td>' + escapeDashboardHtml(item.department_name) + '</td>';
       html += '<td><span class="dashboard-pill">' + escapeDashboardHtml(item.days_label) + '</span><br><small>' + escapeDashboardHtml(item.revisit_date_display) + '</small></td>';
       html += '</tr>';
     });
@@ -1649,7 +1668,8 @@ $defaultDashboardSecurityId = !empty($admins[0]['id']) ? $admins[0]['id'] : $Ses
           url: 'ajax/dashbord/getmonthyear.php',
           type: 'post',
           data: {
-            year: id
+            year: id,
+            security_id: currentSelectedSecId
           },
           success: function(data) {
             var response = JSON.parse(data);
@@ -1679,6 +1699,7 @@ $defaultDashboardSecurityId = !empty($admins[0]['id']) ? $admins[0]['id'] : $Ses
   }
 
   function GetAppointDate(secId) {
+    if (secId === undefined || secId === null) secId = currentSelectedSecId;
     var appoint_date = $('#date').val();
 
     $.ajax({
@@ -1703,7 +1724,7 @@ $defaultDashboardSecurityId = !empty($admins[0]['id']) ? $admins[0]['id'] : $Ses
       type: 'get',
       dataType: 'json',
       success: function(data) {
-        var optionData = '';
+        var optionData = '<option value="0">All Departments</option>';
         $.each(data, function(key, val) {
           optionData += '<option value="' + val.dept_id + '"> ' + val.departmentName + ' </option>';
         });

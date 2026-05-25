@@ -27,9 +27,9 @@ $securityType     = $checkDoctorRes->fetch_assoc()['security_type'] ?? 'U';
 $where  = "ao.appoint_status = '1' AND ao.org_id = " . (int)$org_id;
 $where .= " AND ao.appoint_date BETWEEN '" . $mysqli->real_escape_string($from) . "' AND '" . $mysqli->real_escape_string($to) . "'";
 
-// Doctor filter logic
+// Doctor filter logic — $doctor is a doc_id from the dropdown
 if ($doctor) {
-    $where .= " AND d.doctor_name = '" . $mysqli->real_escape_string($doctor) . "'";
+    $where .= " AND d.doc_id = " . (int)$doctor;
 } elseif ($securityType === 'U') {
     // Restrict normal users to their own/assigned doctors
     $where .= " AND (

@@ -34,7 +34,16 @@
       "Bash(php -r 'require_once '\\\\''config/functions.php'\\\\''; mysqli_query\\($conn, '\\\\''ALTER TABLE organization ADD COLUMN org_stamp VARCHAR\\(255\\) NOT NULL DEFAULT \"\" AFTER logo_without_text'\\\\''\\); echo mysqli_error\\($conn\\) ?: '\\\\''ok'\\\\'';')",
       "Bash(php -r 'require_once '\\\\''config/functions.php'\\\\''; $r = mysqli_query\\($conn, \"SELECT role_id, role_name FROM roles WHERE status='\\\\''1'\\\\'' ORDER BY role_id\"\\); while\\($row = mysqli_fetch_assoc\\($r\\)\\) echo $row['\\\\''role_id'\\\\''].'\\\\'': '\\\\''.$row['\\\\''role_name'\\\\''].PHP_EOL;')",
       "Bash(php -r ' *)",
-      "Bash(php *)"
+      "Bash(php *)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\xampp\\\\htdocs\\\\H360-OP-new-UI-h360_op\" -Directory | ForEach-Object { $_.Name })",
+      "Bash(C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe *)",
+      "Bash(\"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"DESCRIBE tests;\" h360_op)",
+      "Bash(\"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"DESCRIBE prescripition;\" h360_op)",
+      "Bash(\"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"SHOW COLUMNS FROM appointment_online LIKE '%payment%';\" h360_op)",
+      "Bash(\"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"SHOW COLUMNS FROM bill LIKE '%pay%';\" h360_op)",
+      "Bash(\"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"SELECT DISTINCT pay_method FROM appointment_online WHERE pay_method IS NOT NULL AND pay_method != '' LIMIT 20;\" h360_op)",
+      "Bash(\"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"SHOW COLUMNS FROM invoice LIKE '%pay%';\" h360_op)",
+      "Bash(\"C:\\\\xampp\\\\mysql\\\\bin\\\\mysql.exe\" -u root -e \"SELECT DISTINCT payment_method FROM invoice WHERE payment_method IS NOT NULL AND payment_method != '' LIMIT 20;\" h360_op)"
     ]
   }
 }

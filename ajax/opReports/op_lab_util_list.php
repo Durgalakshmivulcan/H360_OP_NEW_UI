@@ -18,15 +18,20 @@ if ($action === "doctors") {
     $checkDoctor = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '$SessionUserId'");
     $securityType = mysqli_fetch_assoc($checkDoctor)['security_type'] ?? '';
 
-    // SA_FATAL_FIXED_B_390: include SA so $sql is defined for super-admin (was B-390)
-    if ($securityType === 'A' || $securityType === 'SA') {
+    $esc_org = mysqli_real_escape_string($conn, $SessionOrgId);
+
+    if ($securityType === 'SA') {
+        // Super-admin sees all doctors across all orgs
         $sql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' ORDER BY doctor_name ASC";
-    }
-    // Receptionist: only assigned doctors
-    elseif ($securityType === 'U') {
+    } elseif ($securityType === 'A') {
+        // Admin sees only their org's doctors
+        $sql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' AND org_id='$esc_org' ORDER BY doctor_name ASC";
+    } elseif ($securityType === 'U') {
+        // Doctor/Receptionist: only assigned doctors within their org
         $sql = "SELECT d.doc_id, d.doctor_name
                 FROM doctors d
                 WHERE d.status='1'
+                AND d.org_id='$esc_org'
                 AND (
                     d.security_id = '$SessionUserId'
                     OR d.doc_id IN (
@@ -34,6 +39,9 @@ if ($action === "doctors") {
                     )
                 )
                 ORDER BY d.doctor_name ASC";
+    } else {
+        echo json_encode(["doctors" => []]);
+        exit;
     }
 
     $res = mysqli_query($conn, $sql) or die(json_encode(['error' => mysqli_error($conn)]));
@@ -58,8 +66,16 @@ if ($action === "tests" || $action === "data") {
     $checkDoctor = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '$SessionUserId'");
     $securityType = mysqli_fetch_assoc($checkDoctor)['security_type'] ?? '';
 
+    $isSA    = ($securityType === 'SA');
+    $esc_org = mysqli_real_escape_string($conn, $SessionOrgId);
+
     // Build WHERE conditions
     $where = [];
+
+    // Org filter — applied to prescripition table for all non-SA users
+    if (!$isSA && $SessionOrgId !== '') {
+        $where[] = "p.org_id = '$esc_org'";
+    }
 
     // Date filter
     if ($from !== '' && $to !== '') {
@@ -100,9 +116,10 @@ if ($action === "tests" || $action === "data") {
         )";
     }
 
-    // Fetch all tests
+    // Fetch all tests — org-scoped for non-SA users
     $all_tests = [];
-    $test_sql = "SELECT test_name FROM tests WHERE status='1' ORDER BY test_name ASC";
+    $test_org_cond = (!$isSA && $SessionOrgId !== '') ? "AND org_id = '$esc_org'" : '';
+    $test_sql = "SELECT test_id, test_name FROM tests WHERE status='1' $test_org_cond ORDER BY test_name ASC";
     $test_res = mysqli_query($conn, $test_sql) or die(json_encode(['error' => mysqli_error($conn)]));
     while ($row = mysqli_fetch_assoc($test_res)) {
         $all_tests[trim($row['test_name'])] = 0;

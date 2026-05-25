@@ -8,9 +8,39 @@ $sessionRoleId = $_SESSION['role_id'] ?? '';
 $sessionOrgId = $_SESSION['org_id'] ?? '';
 $securityId = !empty($_GET['security_id']) ? (int) $_GET['security_id'] : (int) $sessionUserId;
 
+$isSA    = ((string)$sessionUserId === '1' || (string)$sessionRoleId === '1');
+$isAdmin = ((string)$sessionRoleId === '6');
+
+// Determine the effective security_id to filter by.
+// Doctors are always locked to their own data regardless of the passed parameter.
+// Receptionists/Admins use the passed security_id so the avatar selector works.
+$effectiveSecId = (int)$securityId;
+if (!$isSA && !$isAdmin && !empty($sessionUserId)) {
+    $esc_me = mysqli_real_escape_string($conn, $sessionUserId);
+    $myDoc = mysqli_fetch_assoc(mysqli_query($conn,
+        "SELECT doc_id FROM doctors WHERE security_id='$esc_me' AND status='1' LIMIT 1"));
+    if ($myDoc && !empty($myDoc['doc_id'])) {
+        // Logged-in user is a doctor — force their own security_id
+        $effectiveSecId = (int)$sessionUserId;
+    }
+}
+
+// Resolve effectiveSecId → doc_id for appointment_online.doctor_name filtering
+$filterDocId   = null; // null = no doctor filter (SA or admin seeing all)
+$filterSecId   = null; // security_id for gynaec_prescriptions.created_by
+if (!$isSA && $effectiveSecId > 0) {
+    $esc_esid = mysqli_real_escape_string($conn, (string)$effectiveSecId);
+    $drRow = mysqli_fetch_assoc(mysqli_query($conn,
+        "SELECT doc_id FROM doctors WHERE security_id='$esc_esid' AND status='1' LIMIT 1"));
+    if ($drRow && !empty($drRow['doc_id'])) {
+        $filterDocId = (int)$drRow['doc_id'];
+        $filterSecId = $effectiveSecId;
+    }
+}
+
 $orgFilter = "";
 $gOrgFilter = "";
-$birthdayOrgFilter = ""; // org-only — no doctor scope so all org patients' birthdays appear
+$birthdayOrgFilter = "";
 
 if (!empty($sessionOrgId)) {
     $esc_org = mysqli_real_escape_string($conn, (string) $sessionOrgId);
@@ -18,11 +48,13 @@ if (!empty($sessionOrgId)) {
     $gOrgFilter       = " AND gp.org_id = '$esc_org'";
     $birthdayOrgFilter = " AND ao.org_id = '$esc_org'";
 }
-// Doctor scope on revisits only — birthday wishes are org-wide, not per-doctor
-$orgFilter .= currentDoctorScopeSql('ao.doctor_name');
-// gp.doctor_name on gynaec_prescriptions is a *string* (doctor full name), not doc_id, so we cannot
-// safely use the helper there without a join refactor; the prescripition arm above + the dashboard
-// per-doctor security_id filter at the metrics layer keep gynaec scoping consistent.
+
+// Apply doctor-level scope using resolved doc_id / security_id
+if ($filterDocId !== null) {
+    $orgFilter        .= " AND ao.doctor_name = '$filterDocId'";
+    $birthdayOrgFilter .= " AND ao.doctor_name = '$filterDocId'";
+    $gOrgFilter       .= " AND gp.created_by = '$filterSecId'";
+}
 
 $birthdaySql = "
     SELECT
@@ -61,7 +93,8 @@ $revisitSql = "
         revisit_source.patient_name,
         revisit_source.mobile_number,
         revisit_source.reviewafterdate,
-        revisit_source.doctor_name
+        revisit_source.doctor_name,
+        revisit_source.department_name
     FROM (
         SELECT
             p.patient_uid AS patient_id,
@@ -69,12 +102,14 @@ $revisitSql = "
             COALESCE(ao.mobile_number, '') AS mobile_number,
             p.reviewafterdate,
             COALESCE(d.doctor_name, '') AS doctor_name,
+            COALESCE(dep.departmentName, '') AS department_name,
             STR_TO_DATE(p.reviewafterdate, '%Y-%m-%d') AS sort_review_date
         FROM prescripition p
         INNER JOIN (
             SELECT patient_uid, MAX(prescription_id) AS latest_rx_id
             FROM prescripition
             WHERE status = '1'
+              AND gynaec_mirror = 0
               AND reviewafterdate IS NOT NULL
               AND reviewafterdate <> ''
               AND reviewafterdate <> '0000-00-00'
@@ -83,7 +118,9 @@ $revisitSql = "
         ) latest ON latest.latest_rx_id = p.prescription_id
         LEFT JOIN appointment_online ao ON ao.appoint_register_id = p.appoint_register_id
         LEFT JOIN doctors d ON ao.doctor_name = d.doc_id
+        LEFT JOIN department dep ON dep.dept_id = d.departments AND dep.status = '1'
         WHERE p.status = '1'
+          AND p.gynaec_mirror = 0
           AND p.reviewafterdate IS NOT NULL
           AND p.reviewafterdate <> ''
           AND p.reviewafterdate <> '0000-00-00'
@@ -97,10 +134,12 @@ $revisitSql = "
             gp.patient_name,
             gp.mobile AS mobile_number,
             gp.reviewafterdate,
-            COALESCE(dg.doctor_name, gp.doctor_name) AS doctor_name,
+            COALESCE(dg.doctor_name, '') AS doctor_name,
+            COALESCE(depg.departmentName, '') AS department_name,
             STR_TO_DATE(gp.reviewafterdate, '%Y-%m-%d') AS sort_review_date
         FROM gynaec_prescriptions gp
-        LEFT JOIN doctors dg ON dg.doctor_name = gp.doctor_name AND dg.status = '1'
+        LEFT JOIN doctors dg ON dg.security_id = gp.created_by AND dg.status = '1'
+        LEFT JOIN department depg ON depg.dept_id = dg.departments AND depg.status = '1'
         INNER JOIN (
             SELECT patient_id, MAX(gynaec_rx_id) AS latest_rx_id
             FROM gynaec_prescriptions
@@ -191,6 +230,7 @@ while ($row = mysqli_fetch_assoc($revisitResult)) {
         'patient_name' => $row['patient_name'],
         'mobile_number' => $row['mobile_number'],
         'doctor_name' => $row['doctor_name'],
+        'department_name' => $row['department_name'],
         'revisit_date_display' => $revisitDate->format('d M Y'),
         'days_label' => 'Review After'
     ];

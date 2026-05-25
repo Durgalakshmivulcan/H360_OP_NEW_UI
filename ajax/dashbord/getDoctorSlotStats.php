@@ -7,11 +7,9 @@ $SessionUserId = $_SESSION['security_id'] ?? '';
 $SessionRoleId = $_SESSION['role_id'] ?? '';
 $SessionOrgId  = $_SESSION['org_id'] ?? '';
 
-// $date = $_GET["security_id"];
-$security_id = $SessionUserId;
-if (!empty($_GET['security_id'])) {
-    $security_id = intval($_GET['security_id']);
-}
+$security_id = isset($_GET['security_id']) ? (int)$_GET['security_id'] : (int)$SessionUserId;
+// security_id=0 means "all doctors in org"
+$showAll = ($security_id === 0);
 
 $adminQry = ($SessionUserId != "1") ? " AND a.org_id='$SessionOrgId'" : "";
 
@@ -44,8 +42,14 @@ function calculateSlotsFromTiming($start, $end, $slotDuration = 15) {
     return floor($diffMinutes / $slotDuration); 
 }
 
+$isSA_slot = ((string)$SessionUserId === '1');
+if ($showAll) {
+    $docWhere = $isSA_slot ? "d.status = '1'" : "d.status = '1' AND d.org_id = '$SessionOrgId'";
+} else {
+    $docWhere = "d.status = '1' AND d.security_id = '$security_id'";
+}
 $query = "
-    SELECT 
+    SELECT
         d.doc_id AS doctor_id,
         d.doctor_name,
         d.doctor_type,
@@ -53,7 +57,7 @@ $query = "
         d.email,
         d.doc_img
     FROM doctors d
-    WHERE d.status = '1' AND d.security_id = '$security_id'
+    WHERE $docWhere
     ORDER BY d.doctor_name
 ";
 $result = mysqli_query($conn, $query);

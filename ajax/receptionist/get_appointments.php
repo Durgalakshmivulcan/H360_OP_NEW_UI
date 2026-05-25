@@ -19,7 +19,15 @@ $toDate    = !empty($_POST['toDate']) ? $_POST['toDate'] : date('Y-m-d');
 $doctorId  = !empty($_POST['doctor']) ? (int)$_POST['doctor'] : null;
 $serviceId = !empty($_POST['service']) ? (int)$_POST['service'] : null;
 
+$esc_uid = mysqli_real_escape_string($conn, $SessionUserId);
+$esc_org = mysqli_real_escape_string($conn, $SessionOrgId);
+
+$checkDocType = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '$esc_uid'");
+$secType = mysqli_fetch_assoc($checkDocType)['security_type'] ?? '';
+
 $where = [];
+$where[] = "a.org_id = '$esc_org'";
+$where[] = "a.appoint_status = '1'";
 $where[] = "DATE(a.appoint_date) BETWEEN '$fromDate' AND '$toDate'";
 
 if ($doctorId) {
@@ -27,19 +35,21 @@ if ($doctorId) {
 }
 
 if ($serviceId) {
-    // Keep logic same: check if doctor offers this service
     $where[] = "FIND_IN_SET($serviceId, d.doctor_services) > 0";
+}
+
+// SA and Admin see all org doctors; doctors/receptionists see only assigned doctors
+if ($secType !== 'SA' && $secType !== 'A') {
+    $where[] = "(d.security_id = '$esc_uid' OR d.doc_id IN (SELECT r.doc_id FROM receptionnist r WHERE r.security_id = '$esc_uid'))";
 }
 
 $whereClause = implode(' AND ', $where);
 
-// FIX_B_1903: doctor-scope filter — receptionists/admins return '' (see all),
-// doctors are restricted to their own appoint_online rows.
 $docScope = currentDoctorScopeSql('a.doctor_name');
 
 // Build SQL query
 $sql = "
-    SELECT 
+    SELECT
         a.appoint_register_id,
         a.appoint_unicode,
         a.patient_name,
@@ -56,7 +66,6 @@ $sql = "
         a.org_id AS AppointOrgId,
         a.appoint_id,
         a.invoice_payment,
-        -- FIX_B_072: surface payment details for receptionist board cols 12-15.
         a.amount_method,
         a.transaction_number,
         a.transaction_amount,
@@ -71,13 +80,7 @@ $sql = "
     JOIN services s ON FIND_IN_SET(s.service_id, d.doctor_services) > 0
     LEFT JOIN doctor_patient_duration dpd ON a.appoint_register_id = dpd.appointment_id
     LEFT JOIN prescripition p ON a.appoint_register_id = p.appoint_register_id
-    WHERE 
-        a.org_id = '$SessionOrgId'
-        AND a.appoint_status = '1'
-        AND (d.security_id = '$SessionUserId' 
-             OR d.doc_id IN (SELECT r.doc_id FROM receptionnist r WHERE r.security_id = '$SessionUserId'))
-        AND $whereClause
-        $docScope
+    WHERE $whereClause $docScope
     GROUP BY a.appoint_register_id, s.service_name
 ";
 

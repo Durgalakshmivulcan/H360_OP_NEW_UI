@@ -131,32 +131,36 @@ $SessionOrgId = $_SESSION['org_id'];
               <select id="doctor" name="doctor" class="form-select select2">
                 <option value="">All Doctors</option>
                 <?php
-                $checkDoctor = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '$SessionUserId'");
+                $esc_org = mysqli_real_escape_string($conn, $SessionOrgId);
+                $checkDoctor = mysqli_query($conn, "SELECT security_type FROM security WHERE status='1' AND security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'");
                 $securityType = mysqli_fetch_assoc($checkDoctor)['security_type'] ?? '';
 
-                // ---- Doctors list ----
-                // SA_FATAL_FIXED_B_545: include SA so $sql is defined for super-admin
-                if ($securityType === 'A' || $securityType === 'SA') {
-                    $sql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' ORDER BY doctor_name ASC";
+                if ($securityType === 'SA') {
+                    $docSql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' ORDER BY doctor_name ASC";
+                } elseif ($securityType === 'A') {
+                    $docSql = "SELECT doc_id, doctor_name FROM doctors WHERE status='1' AND org_id='$esc_org' ORDER BY doctor_name ASC";
                 } elseif ($securityType === 'U') {
-                    $sql = "SELECT d.doc_id, d.doctor_name
-                            FROM doctors d
-                            WHERE d.status = '1'
-                            AND (
-                                d.security_id = '$SessionUserId'
-                                OR d.doc_id IN (
-                                    SELECT r.doc_id 
-                                    FROM receptionnist r 
-                                    WHERE r.security_id = '$SessionUserId'
-                                )
-                            )
-                            ORDER BY d.doctor_name ASC";
+                    $docSql = "SELECT d.doc_id, d.doctor_name
+                               FROM doctors d
+                               WHERE d.status = '1'
+                               AND d.org_id = '$esc_org'
+                               AND (
+                                   d.security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'
+                                   OR d.doc_id IN (
+                                       SELECT r.doc_id
+                                       FROM receptionnist r
+                                       WHERE r.security_id = '" . mysqli_real_escape_string($conn, $SessionUserId) . "'
+                                   )
+                               )
+                               ORDER BY d.doctor_name ASC";
+                } else {
+                    $docSql = null;
                 }
-
-                $res = mysqli_query($conn, $sql) or die(json_encode(['error' => mysqli_error($conn)]));
-
-                while ($row = mysqli_fetch_assoc($res)) {
-                    echo "<option value=\"{$row['doc_id']}\">{$row['doctor_name']}</option>";
+                if ($docSql) {
+                    $res = mysqli_query($conn, $docSql) or die(mysqli_error($conn));
+                    while ($row = mysqli_fetch_assoc($res)) {
+                        echo "<option value=\"{$row['doc_id']}\">{$row['doctor_name']}</option>";
+                    }
                 }
               ?>
               </select>
@@ -166,7 +170,11 @@ $SessionOrgId = $_SESSION['org_id'];
               <select id="service" name="service" class="form-select select2">
                 <option value="">All Services</option>
                 <?php
-                $serviceRes = mysqli_query($conn, "SELECT service_id, service_name FROM services WHERE status='1'");
+                if ($securityType === 'SA') {
+                    $serviceRes = mysqli_query($conn, "SELECT service_id, service_name FROM services WHERE status='1' ORDER BY service_name ASC");
+                } else {
+                    $serviceRes = mysqli_query($conn, "SELECT DISTINCT s.service_id, s.service_name FROM services s JOIN doctors d ON FIND_IN_SET(s.service_id, d.doctor_services) > 0 WHERE s.status='1' AND d.org_id='$esc_org' AND d.status='1' ORDER BY s.service_name ASC");
+                }
                 while ($srv = mysqli_fetch_object($serviceRes)) {
                   echo '<option value="'.$srv->service_id.'">'.$srv->service_name.'</option>';
                 }
